@@ -30,7 +30,7 @@
   }
 
   .navbar-toggler {
-    background-color: #fff;
+    background-color: #fff !important;
   }
   .navbar-collapse {
     background: #4353ab;
@@ -40,7 +40,7 @@
     position: relative;
     top: 0;
     font-size: 30px;
-    color: #fff;
+    color: #020202 !important;
   }
   .navbar-expand-lg .navbar-nav .nav-link {
     margin-top: 15px;
