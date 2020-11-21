@@ -68,6 +68,7 @@ export class NodesTable extends React.Component{
         <th>Host</th>
         <th>Port</th>
         <th>OS</th>
+        <th>Active</th>
         <th>Stakes</th>
       </tr>
       {this.state.nodes.isLoading ? (
@@ -92,6 +93,7 @@ export class NodesTable extends React.Component{
             <th>{this.extractIp(node.nodeIp)}</th>
             <th>{this.extractPort(node.nodeIp)}</th>
             <th>{node.os || 'Linux'}</th>
+            <th>{node.isOn ? 'Yes' : 'No'}</th>
             <th>
               {node?.stakes?.amount
                 ? formatEther(node.stakes?.amount) + ' ES'
