@@ -30,6 +30,7 @@ class Blocks extends Component {
 
   componentDidMount() {
     this.fetchBlocks(0);
+    this.nrtTicker();
   }
 
   async fetchBlocks(start, length = 10) {
@@ -58,6 +59,79 @@ class Blocks extends Component {
 
   openSnackBar(message) {
     this.snackbarRef.current.openSnackBar(message);
+  }
+
+
+  nrtTicker() {
+    /// @dev countdown timer for nrt release
+    const deployTimestamp = 1564336091 * 1000;
+    const monthDuration = 2629744 * 1000;
+
+    let seeFutureNrt = false;
+    let currentNrtMonthNumber = 0;
+    // let nextNrtTimestamp = deployTimestamp + monthDuration * (currentNrtMonthNumber + 1);
+
+    setInterval(async () => {
+      try {
+        const res = await Apis.getCurrentNRTMonth();
+        if (!currentNrtMonthNumber) {
+          currentNrtMonthNumber = res.data.nrtMonth;
+        } else if (
+          res.data.nrtMonth !== currentNrtMonthNumber &&
+          !seeFutureNrt
+        ) {
+          window.location.reload();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }, 3500);
+
+    setInterval(() => {
+      const nextNrtTimestamp =
+        deployTimestamp + monthDuration * (currentNrtMonthNumber + 1);
+      const currentTimestamp = Date.now();
+
+      const timeRemaining =
+        nextNrtTimestamp > currentTimestamp
+          ? nextNrtTimestamp - currentTimestamp
+          : 0;
+
+      //     window.isOnProduction || console.log(timeRemaining);
+
+      const daysRemaining = Math.floor(timeRemaining / 1000 / 24 / 60 / 60);
+      const hoursRemaining = Math.floor(
+        (timeRemaining - daysRemaining * 1000 * 24 * 60 * 60) / 1000 / 60 / 60
+      );
+      const minutesRemaining = Math.floor(
+        (timeRemaining -
+          daysRemaining * 1000 * 24 * 60 * 60 -
+          hoursRemaining * 1000 * 60 * 60) /
+          1000 /
+          60
+      );
+      const secondsRemaining = Math.floor(
+        (timeRemaining -
+          daysRemaining * 1000 * 24 * 60 * 60 -
+          hoursRemaining * 1000 * 60 * 60 -
+          minutesRemaining * 1000 * 60) /
+          1000
+      );
+
+      // window.isOnProduction || console.log(daysRemaining, hoursRemaining, minutesRemaining, secondsRemaining);
+
+      this.setState({
+        nextNrtCounter: {
+          data: {
+            days: daysRemaining,
+            hours: hoursRemaining,
+            minutes: minutesRemaining,
+            seconds: secondsRemaining,
+          },
+          isLoading: false,
+        },
+      });
+    }, 1000);
   }
 
   render() {
@@ -197,7 +271,12 @@ class Blocks extends Component {
                               {block.provisional_reward !== null ? (
                                 block.provisional_reward + 'ES'
                               ) : (
-                                <i>pending for next NRT...</i>
+                                <i>Time Remaining for  Next NRT released...
+                                {this.state.nextNrtCounter.data.days}Days:
+                                {this.state.nextNrtCounter.data.hours}:
+                                {this.state.nextNrtCounter.data.minutes}:
+                                {this.state.nextNrtCounter.data.seconds}
+                                </i>
                               )}
                             </td>
                           </tr>

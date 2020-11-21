@@ -900,7 +900,7 @@ class Homepage extends Component {
                                   {block.provisional_reward ? (
                                     block.provisional_reward
                                   ) : (
-                                    <i>pending for Next NRT...</i>
+                                    <i>Time Remaining for  Next NRT released...</i>
                                   )}
                                 </div>{' '}
                               </td>

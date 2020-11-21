@@ -1649,7 +1649,7 @@ class Dashboard extends Component {
                 <Col lg={3}>
                   <div className="sub-supply-box mb10">
                     <div className="es-box-ds">
-                      <p className="supply-txt">TOTAL ES OWNERS</p>
+                      <p className="supply-txt">TOTAL ES Holders</p>
                       <p className="supply-txt">
                         {this.state.esOwners} addresses{' '}
                       </p>
@@ -2532,6 +2532,10 @@ class Dashboard extends Component {
                       {this.state.betdeex.data.predictors}
                     </p>
                   </div>
+                  <div>
+                  <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">-</p>
+                  </div>
                 </div>
 
                 <div className="bet-flex-border">
@@ -2597,7 +2601,11 @@ class Dashboard extends Component {
                     <p className="sect4-value">
                       {this.state.computeex.data.totalVolume}
                     </p>
+
+                    <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">-</p>
                   </div>
+                 
                 </div>
               </div>
             </Col>
@@ -2813,10 +2821,6 @@ class Dashboard extends Component {
                     <p className="sect4-context">Number of Lenders </p>
                     <p className="sect4-value-swal">0</p>
                   </div>
-                   <div>
-                    <p className="sect4-context">Volume of ES</p>
-                    <p className="sect4-value">0</p>
-                  </div>
                 </div>
                 <div className="swwall-border-flex">
                   <div>
@@ -2830,6 +2834,11 @@ class Dashboard extends Component {
                   <div>
                     <p className="sect4-context">TFC Generated</p>
                     <p className="sect4-value">0 </p>
+                  
+                  </div>
+                  <div>
+                  <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">0</p>
                   </div>
                 </div>
               </div>
