@@ -993,6 +993,7 @@ class Homepage extends Component {
           </Container>
 
           <Container>
+
             <Row>
               <Col lg={12}>
                 <div className="second-section-es mt40 card purpalebg ">
@@ -1045,7 +1046,24 @@ class Homepage extends Component {
                       </div>
                     </Col>
                   </Row>
-                  {/* <Row className="mt30">
+                 {/* 2nd row */}
+                 <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Side-chain Framework used</p>
+                          <p className="block-value">
+                            <small className="text-white">Deposit based Plasma Framework</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
                     <Col lg={4} className="">
                       <div className="block-bg">
                         <div className="escolor-pic1">
@@ -1055,15 +1073,169 @@ class Homepage extends Component {
                           />
                         </div>
                         <div className="block-value">
-                          <p className="block-text">CURRENT LEADER</p>
-                          <p className="">Eraswap Node</p>
+                          <p className="block-text">Software Used</p>
+                          <p className="block-value">
+                          <small className="text-white">EVM V1.0 Bytecode</small>
+                          </p>
                         </div>
                       </div>
                     </Col>
-                    <Col lg={8} className="">
-                      <div className="block-bg"></div>
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Stable Release</p>
+                          <p className="block-value">
+                          <small className="text-white">OpenEthereum v3.1.0</small>
+                          </p>
+                        </div>
+                      </div>
                     </Col>
-                  </Row> */}
+                  </Row>
+                
+                {/* end 2nd row */}
+
+
+                <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Written In</p>
+                          <p className="block-value">
+                          <small className="text-white">Rust & Solidity</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Platform</p>
+                          <p className="block-value">
+                          <small className="text-white">x86-64,ARM</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Operating System </p>
+                          <p className="block-value">
+                          <small className="text-white">Distributed Computing</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                
+                  {/* end3rd row */}
+
+
+                
+                  <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Hashing Algorithm</p>
+                          <p className="block-value">
+                          <small className="text-white">Keccak</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Chain ID</p>
+                          <p className="block-value">
+                          <small className="text-white">0x144d</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">RPC Url</p>
+                          <p className="block-value">
+                          <small ><Link  className="text-white" to="https://eraswap.network/">https://eraswap.network/</Link></small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                
+                  {/* end 4th row */}
+
+                  <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Transactions/Day</p>
+                          <p className="block-value">
+                            <small className="text-white">B.6 Million +</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    </Row>
+
+                    {/* end last row */}
+
+                 
                 </div>
               </Col>
             </Row>
@@ -1169,12 +1341,12 @@ class Homepage extends Component {
             </Row>
           </Container> */}
           <Container>
-            <Row className="mt40">
+            {/* <Row className="mt40">
               <Col lg={12}>
-                <h4>Nodes</h4>
+            
           <NodesTable />
           </Col>
-          </Row>
+          </Row> */}
           </Container>
           <Container>
             <Row className="mt40">
