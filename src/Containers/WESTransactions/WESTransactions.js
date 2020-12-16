@@ -23,7 +23,8 @@ class WESTransactions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      wesTransactions: []
+      wesTransactions: [],
+      isLoading: false
     };
   }
 
@@ -33,6 +34,9 @@ class WESTransactions extends Component {
 
   fetchWESTransactions = async () => {
     try {
+      await this.setState({
+        isLoading: true
+      });
       const wesTransactions = (await prepaidInstance.queryFilter(prepaidInstance.filters.Transfer(null,null,null)))
         .map(log => prepaidInstance.interface.parseLog(log))
         .map(log => ({
@@ -41,12 +45,16 @@ class WESTransactions extends Component {
           tokens: log.args['tokens']
         }));
 
-        this.setState({ wesTransactions });
+        this.setState({ 
+          wesTransactions,
+          isLoading: false
+        });
     } catch (e) {
       console.log(e);
       this.openSnackBar(e.message);
       this.setState({
-        wesTransactions: []
+        wesTransactions: [],
+        isLoading: false
       });
     }
   }
@@ -93,6 +101,8 @@ class WESTransactions extends Component {
                   paginationComponentOptions={{
                     noRowsPerPage: true
                   }}
+                  progressPending={this.state.isLoading}  
+                  progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
                 />
               </div>
             </Col>

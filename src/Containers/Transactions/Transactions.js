@@ -125,52 +125,52 @@ class Transaction extends Component {
                               </td>
                               <td className="tr-color-txt">
                                 <AddressLink
-                                  value={transaction.block_number}
+                                  value={transaction.block.block_number}
                                   type="block"
                                 />
                               </td>
                               <td>
                                 {toLocaleTimestamp(
-                                  transaction.timestamp
+                                  transaction.block.timestamp
                                 ).fromNow()}
                               </td>
                               <td>
                                 -
                               </td>
                               <td>
-                              {transaction.fromLabel && (
+                              {transaction.fromAddress.label && (
                                   <Link
-                                    to={'/' + transaction.fromAddress}
+                                    to={'/' + transaction.fromAddress.address}
                                   >
-                                    {transaction.fromLabel}
+                                    {transaction.fromAddress.label}
                                   </Link>
                                 )}
                                 
                                 <span className="tr-color-txt">
                                   <AddressLink
-                                    value={transaction.fromAddress}
+                                    value={transaction.fromAddress.address}
                                     type="address"
                                     shrink={
-                                      transaction.fromLabel?.length
+                                      transaction.fromAddress?.label?.length
                                     }
                                   />
                                 </span>
                               </td>
                               <td>
-                              {transaction.toLabel && (
+                              {transaction.toAddress.label                                                                                                                                                                                                                                                                                                                                                                                                             && (
                                   <Link
-                                    to={'/' + transaction.toAddress}
+                                    to={'/' + transaction.toAddress.address}
                                   >
-                                    {transaction.toLabel}
+                                    {transaction.toAddress.label}
                                   </Link>
                                 )}
                                 <span className="tr-color-txt">
                                   {transaction?.toAddress
                                     && <AddressLink
-                                      value={transaction.toAddress}
+                                      value={transaction.toAddress.address}
                                       type="address"
                                       shrink={
-                                        transaction.fromLabel?.length
+                                        transaction.toAddress?.label?.length
                                       }
                                     />}
                                 </span>
