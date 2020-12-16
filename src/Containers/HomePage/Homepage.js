@@ -585,7 +585,7 @@ class Homepage extends Component {
                             data-toggle="tooltip"
                             data-placement="top"
                             title="Era Swap Network Proof of Stake (ESN PoS)"
-                          >AMOUNT OF STAKINGS</p>
+                          >ESNPOSCP Delegation</p>
                           <p className="era-value text-black">
                             {this.state.totalESStaked} ES
                           </p>
