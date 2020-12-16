@@ -315,7 +315,7 @@ class Dashboard extends Component {
       const airdropData = await Apis.fetchAddress(await kycdappInst.resolveAddress(airDropUsername))
       if(airdropData?.totalESSent){
         this.setState({
-          airdropRewards: +PREV_AIRDROP + formatEther(airdropData.totalESSent)
+          airdropRewards: +PREV_AIRDROP + Number(formatEther(airdropData.totalESSent))
         });
       } else {
         this.setState({
@@ -606,7 +606,7 @@ class Dashboard extends Component {
     } finally {
       this.setState({
 
-        allTxnsCount: res?.data ? res.data : '-',
+        allTxnsCount: res ? res : '-',
 
       });
     }
@@ -1935,7 +1935,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Timeally total NRT Rewards Distributed</p>
                     <p className="value-dash-txt">
-                    {this.state.timeallyRewards}
+                    {this.state.timeallyRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -1945,7 +1945,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">ESNPOSCP Rewards Distributed </p>
                     <p className="value-dash-txt">
-                     {this.state.ESNPOSCPRewards}
+                     {this.state.ESNPOSCPRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -1955,7 +1955,7 @@ class Dashboard extends Component {
                 <Card className=" ">
                   <Card.Body>
                     <p className="sect-txt-bold">KYC Pending Bucket </p>
-              <p className="value-dash-txt">{this.state.kycDappBal}</p>
+              <p className="value-dash-txt">{this.state.kycDappBal} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -1963,7 +1963,7 @@ class Dashboard extends Component {
                 <Card className="">
                   <Card.Body>
                     <p className="sect-txt-bold">Reserves for Crowd Fund phase 2 & 3 . </p>
-              <p className="value-dash-txt">{this.state.crowdFundBal}</p>
+              <p className="value-dash-txt">{this.state.crowdFundBal} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -1987,7 +1987,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Total Power Tokens Distributed </p>
                     <p className="value-dash-txt">
-                     {this.state.powertokenRewards}
+                     {this.state.powertokenRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -1997,7 +1997,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Airdrop Total Distributed </p>
                     <p className="value-dash-txt">
-                      {this.state.airdropRewards}
+                      {this.state.airdropRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -2007,7 +2007,7 @@ class Dashboard extends Component {
                 <Card className=" ">
                   <Card.Body>
                     <p className="sect-txt-bold">TimeAlly Club Total Distributed </p>
-                    <p className="value-dash-txt">{this.state.timeallyClubRewards}</p>
+                    <p className="value-dash-txt">{this.state.timeallyClubRewards} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -2015,7 +2015,7 @@ class Dashboard extends Component {
                 <Card className="">
                   <Card.Body>
                     <p className="sect-txt-bold">DaySwappers Total Rewards</p>
-                    <p className="value-dash-txt">{this.state.dayswappersRewards}</p>
+                    <p className="value-dash-txt">{this.state.dayswappersRewards} ES</p>
                   </Card.Body>
                 </Card>
               </Col>

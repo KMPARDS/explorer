@@ -63,9 +63,9 @@ export class NodesTable extends React.Component{
     return <div className="table-responsive">
     <table className="es-transaction striped bordered hover table">
       <tr>
-        <th>Wallet Address</th>
-        <th>Last Seen</th>
+        {/* <th>Wallet Address</th> */}
         <th>Host</th>
+        <th>Last Seen</th>
         <th>Port</th>
         <th>OS</th>
         <th>Active</th>
@@ -78,19 +78,19 @@ export class NodesTable extends React.Component{
       ) : this.state.nodes.data?.length ? (
         this.state.nodes.data.map((node) => (
           <tr>
-            <th>
+            {/* <th>
               {node?.address?.address 
                 && <AddressLink
                     value={node.address.address}
                     type="address"
                   /> || '-'}
-            </th>
+            </th> */}
+            <th>{this.extractIp(node.nodeIp)}</th>
             <th>
               {toLocaleTimestamp(node.lastTimeStamp).format(
                 'hh:mm DD/MM/YYYY'
               )}
             </th>
-            <th>{this.extractIp(node.nodeIp)}</th>
             <th>{this.extractPort(node.nodeIp)}</th>
             <th>{node.os || 'Linux'}</th>
             <th>{node.isOn ? 'Yes' : 'No'}</th>

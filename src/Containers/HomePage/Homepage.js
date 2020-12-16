@@ -585,7 +585,7 @@ class Homepage extends Component {
                             data-toggle="tooltip"
                             data-placement="top"
                             title="Era Swap Network Proof of Stake (ESN PoS)"
-                          >AMOUNT OF STAKINGS</p>
+                          >ESNPOSCP Delegation</p>
                           <p className="era-value text-black">
                             {this.state.totalESStaked} ES
                           </p>
@@ -947,7 +947,7 @@ class Homepage extends Component {
                                   <div className="sub-frst">
                                     {moment(
                                       moment(
-                                        transaction.timestamp
+                                        transaction.block.timestamp
                                       ).toDate()
                                     ).fromNow()}
                                   </div>
@@ -956,14 +956,14 @@ class Homepage extends Component {
                                   <span className="">
                                     From:{' '}
                                     <AddressLink
-                                      value={transaction?.fromAddress}
+                                      value={transaction?.fromAddress.address}
                                       type="address"
                                       shrink={true}
                                     />
                                     <br></br>
                                     To:{' '}
                                     <AddressLink
-                                      value={transaction?.toAddress}
+                                      value={transaction?.toAddress.address}
                                       type="address"
                                       shrink={true}
                                     />
@@ -1348,6 +1348,8 @@ class Homepage extends Component {
           </Col>
           </Row> */}
           </Container>
+          {this.state.validators.data.length
+          ?
           <Container>
             <Row className="mt40">
               <Col lg={12}>
@@ -1429,7 +1431,8 @@ class Homepage extends Component {
               </Col>
             </Row>
           </Container>
-
+        :
+        <></>}
           <Container>
             <Row className="mt40">
               <Col lg={12}>
