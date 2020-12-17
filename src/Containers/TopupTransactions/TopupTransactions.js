@@ -26,8 +26,8 @@ class TopupTransactions extends Component {
       transactions: {
         data: [],
         totalPages: 0,
-        isLoading: true,
       },
+      isLoading: true,
     };
 
     this.fetchFailedTxns = this.fetchTopupTxns.bind(this);
@@ -37,28 +37,32 @@ class TopupTransactions extends Component {
     // this.fetchTopupTxns();
   }
 
-  async fetchTopupTxns(start, length = 10) {
-    try {
-      const res = await Apis.fetchTopupTxns(start, length);
-      console.log('res', res);
-      this.setState({
-        transactions: {
-          data: res.data,
-          totalPages: res.totalPages,
-          isLoading: false,
-        },
-      });
-    } catch (e) {
-      console.log(e);
-      this.openSnackBar(e.message);
-      this.setState({
-        transactions: {
-          ...this.state.transactions,
-          data: [],
-          isLoading: false,
-        },
-      });
-    }
+  fetchTopupTxns = async ({length,page}) =>{
+    // try {
+    //   const res = await Apis.fetchTopupTxns(start, length);
+    //   console.log('res', res);
+    //   this.setState({
+    //     transactions: {
+    //       data: res.data,
+    //       totalPages: res.totalPages,
+    //       isLoading: false,
+    //     },
+    //   });
+    // } catch (e) {
+    //   console.log(e);
+    //   this.openSnackBar(e.message);
+    //   this.setState({
+    //     transactions: {
+    //       ...this.state.transactions,
+    //       data: [],
+    //       isLoading: false,
+    //     },
+    //   });
+    // }
+    await this.setState({ isLoading: true });
+    const res = await Apis.fetchTopupTxns({length,page});
+    await this.setState({ isLoading: false });
+    return res;
   }
 
   openSnackBar(message) {
@@ -78,7 +82,7 @@ class TopupTransactions extends Component {
               <div className="card">
                <CustomDatatable
                title="Top Ups"
-               apiCallback={Apis.fetchTopupTxns}
+               apiCallback={this.fetchTopupTxns}
                countPerPage = {COUNT_PER_PAGE}
                columns={
                  [
@@ -96,7 +100,7 @@ class TopupTransactions extends Component {
                    },
                  ]
                }
-                progressPending={this.state.transactions.isLoading}
+                progressPending={this.state.isLoading}
                 progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
                />
               </div>
