@@ -1227,7 +1227,7 @@ class Homepage extends Component {
                         <div className="block-value">
                           <p className="block-text">RPC Url</p>
                           <p className="block-value">
-                          <small ><Link  className="text-white" to="https://mainnet.eraswap.network/">https://eraswap.network/</Link></small>
+                          <small style={{fontSize:'16px'}}><Link  className="text-white" to="https://mainnet.eraswap.network/">https://mainnet.eraswap.network/</Link></small>
                           </p>
                         </div>
                       </div>
