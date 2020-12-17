@@ -1226,7 +1226,7 @@ class Homepage extends Component {
                         <div className="block-value">
                           <p className="block-text">Transactions/Day</p>
                           <p className="block-value">
-                            <small className="text-white">B.6 Million +</small>
+                            <small className="text-white">8.6 Million +</small>
                           </p>
                         </div>
                       </div>
