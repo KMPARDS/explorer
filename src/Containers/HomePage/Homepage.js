@@ -97,11 +97,15 @@ class Homepage extends Component {
   async loadData(){
     try{
       await this.fetchNRTMonth();
-      this.intervalIds.push(routine(() => this.fetchBlocks(),1500));
-      this.intervalIds.push(routine(() => this.fetchTransactions(),1500));
-      this.intervalIds.push(routine(() => this.fetchBunches(),1500));
-      this.intervalIds.push(routine(() => this.fetchAverageBlock(),1500));
+      // this.intervalIds.push(routine(() => this.fetchBlocks(),1500));
+      // this.intervalIds.push(routine(() => this.fetchTransactions(),1500));
+      // this.intervalIds.push(routine(() => this.fetchBunches(),1500));
+      // this.intervalIds.push(routine(() => this.fetchAverageBlock(),1500));
       
+      this.fetchBlocks();
+      this.fetchTransactions();
+      this.fetchBunches();
+      this.fetchAverageBlock();
       // this.fetchTransactions().catch((e) => console.log(e));
       // this.fetchBunches().catch((e) => console.log(e));
       this.fetchESPrice().catch((e) => console.log(e));

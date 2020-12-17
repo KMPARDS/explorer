@@ -11,6 +11,7 @@ import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import { toLocaleTimestamp } from '../../lib/parsers';
 import { ethers } from 'ethers';
 import { CustomDatatable } from '../../Components/CustomDatatable/CustomDatatable';
+import { nrtManager } from '../../ethereum/NrtManager';
 
 class Blocks extends Component {
   snackbarRef = React.createRef();
@@ -38,7 +39,8 @@ class Blocks extends Component {
     try {
       await this.setState({isLoading: true });
       const res = await Apis.fetchBlocks({page, length});
-      await this.setState({isLoading: false });
+      setTimeout(() => this.setState({isLoading: false }),1000);
+      
       return res;
       if (res)
         this.setState({
@@ -76,19 +78,8 @@ class Blocks extends Component {
     // let nextNrtTimestamp = deployTimestamp + monthDuration * (currentNrtMonthNumber + 1);
 
     setInterval(async () => {
-      try {
-        const res = await Apis.getCurrentNRTMonth();
-        if (!currentNrtMonthNumber) {
-          currentNrtMonthNumber = res.data.nrtMonth;
-        } else if (
-          res.data.nrtMonth !== currentNrtMonthNumber &&
-          !seeFutureNrt
-        ) {
-          window.location.reload();
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      currentNrtMonthNumber = await nrtManager.currentNrtMonth();
+      
     }, 3500);
 
     setInterval(() => {
@@ -215,10 +206,10 @@ class Blocks extends Component {
                   },
                   {
                     name: 'Average Gas Price',
-                    cell: row => <>{row?.average_gas_price &&
+                    cell: row => <>{row?.average_gas_price ?
                       ethers.utils.formatEther(
                         row.average_gas_price
-                      )}{' '}
+                      ) : 0}{' '}
                     ES</>
                   },
                   {
