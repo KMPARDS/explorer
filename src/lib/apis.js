@@ -27,8 +27,8 @@ export default class Apis {
     ajax(`${baseUrl}/address/top-txn-received?length=${length}&page=${page}`);
   static fetchTopAccTxnCount = ({ length = 10, page = 1 }) =>
     ajax(`${baseUrl}/address/top-acc-txn-count?length=${length}&page=${page}`);
-  static fetchBlocks = (start = 0, length = 10) =>
-    ajax(`${baseUrl}/block/?start=${start}&length=${length}`);
+  static fetchBlocks = ({page = 1, length = 10}) =>
+    ajax(`${baseUrl}/block/?page=${page}&length=${length}`);
   static fetchBlock = (blockNumber) => ajax(`${baseUrl}/block/${blockNumber}`);
   static fetchAverageBlock = () => ajax(`${baseUrl}/block/average`);
   static fetchTransactions = (start = 0, length = 10, blockNumber = null) => {
