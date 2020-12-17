@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 const { default: DataTable } = require("react-data-table-component");
 
 
-export const CustomDatatable = ({title,apiCallback,countPerPage,columns}) =>{
+export const CustomDatatable = ({
+  title,
+  apiCallback,
+  countPerPage,
+  columns,
+  progressPending,
+  progressComponent
+}) =>{
   const [data, setData] = useState({});
   const [page, setPage] = useState(1);
 
@@ -42,6 +49,8 @@ export const CustomDatatable = ({title,apiCallback,countPerPage,columns}) =>{
       noRowsPerPage: true
     }}
     onChangePage={page => setPage(page)}
+    progressPending={progressPending}
+    progressComponent={progressComponent}
   />
 }
 

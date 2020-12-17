@@ -12,6 +12,7 @@ import CustomPagination from '../../Components/CustomPagination/CustomPagination
 import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import { ethers } from 'ethers';
 import { toLocaleTimestamp } from '../../lib/parsers';
+import { CustomDatatable } from '../../Components/CustomDatatable/CustomDatatable';
 
 class Transaction extends Component {
   snackbarRef = React.createRef();
@@ -25,8 +26,8 @@ class Transaction extends Component {
         data: [],
         currentPage: 1,
         totalPages: 0,
-        isLoading: true,
       },
+      isLoading: true,
     };
 
     const {
@@ -39,14 +40,17 @@ class Transaction extends Component {
   }
 
   componentDidMount() {
-    this.fetchTransactions();
+    // this.fetchTransactions();
   }
 
-  async fetchTransactions(start, length = 10) {
+  async fetchTransactions({length,page}) {
     try {
-      const res = await Apis.fetchTransactions(start, length, this.blockNumber);
+      await this.setState({ isLoading: true });
+      const res = await Apis.fetchTransactions((page-1)*length, length, this.blockNumber);
       console.log('res', res);
-      this.setState({
+      await this.setState({ isLoading: false });
+      return res;
+      await this.setState({
         transactions: {
           data: res.data,
           currentPage: Number(res.currentPage),
@@ -57,7 +61,7 @@ class Transaction extends Component {
     } catch (e) {
       console.log(e);
       this.openSnackBar(e.message);
-      this.setState({
+      await this.setState({
         transactions: {
           ...this.state.transactions,
           data: [],
@@ -65,6 +69,8 @@ class Transaction extends Component {
         },
       });
     }
+    console.log('this.state.transactions.data',this.state.transactions.data);
+    return this.state.transactions.data;
   }
 
   openSnackBar(message) {
@@ -93,7 +99,103 @@ class Transaction extends Component {
           <Row className="mt40">
             <Col lg={12}>
               <div className="card">
-                <div className="table-responsive">
+              <CustomDatatable
+                title="Transactions"
+                apiCallback={this.fetchTransactions}
+                countPerPage = {10}
+                columns={
+                  [
+                    {
+                      name: 'Txn Hash',
+                      // selector: 'index'
+                      cell: row => <AddressLink
+                        value={row.txn_hash}
+                        type="txn"
+                        shrink={true}
+                      />
+                    },
+                    {
+                      name: 'Block Number',
+                      cell: row => <AddressLink
+                        value={row.block.block_number}
+                        type="block"
+                      />
+                    },
+                    {
+                      name: 'Age',
+                      cell: row => toLocaleTimestamp(
+                        row.block.timestamp
+                      ).fromNow()
+                    },
+                    {
+                      name: 'Type of Transaction',
+                      cell: row => '-'
+                    },
+                    {
+                      name: 'From',
+                      cell: row => <>
+                      {row.fromAddress.label && (
+                        <Link
+                          to={'/' + row.fromAddress.address}
+                        >
+                          {row.fromAddress.label}
+                        </Link>
+                      )}
+                      <span className="tr-color-txt">
+                        <AddressLink
+                          value={row.fromAddress.address}
+                          type="address"
+                          shrink={
+                            true
+                          }
+                        />
+                      </span>
+                    </>
+                    },
+                    {
+                      name: 'To',
+                      cell: row => <>
+                        {row.toAddress.label                                                                                                                                                                                                                                                                                                                                                                                                             && (
+                          <Link
+                            to={'/' + row.toAddress.address}
+                          >
+                            {row.toAddress.label}
+                          </Link>
+                        )}
+                        <span className="tr-color-txt">
+                          {row?.toAddress
+                            && <AddressLink
+                              value={row.toAddress.address}
+                              type="address"
+                              shrink={
+                                true
+                              }
+                            />}
+                        </span>
+                      </>
+                    },
+                    {
+                      name: 'Value',
+                      cell: row => <>{row.value && ethers.utils.formatEther(row.value)} ES</>
+                    },
+                    {
+                      name: '(Txn Fee)',
+                      cell: row =><>
+                      {(row.gas_price !== null 
+                        && row.gas_used !== null)
+                        ? ethers.utils.formatEther(
+                        ethers.BigNumber.from(
+                          row.gas_price
+                        ).mul(row.gas_used)
+                      ) : 'N/A'}{' '}
+                      ES</>
+                    },
+                  ]
+                }
+                  progressPending={this.state.isLoading}
+                  progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
+                />
+                {/* <div className="table-responsive">
                   <table className="es-transaction table">
                     <thead>
                       <tr>
@@ -208,7 +310,7 @@ class Transaction extends Component {
                     totalPages={this.state.transactions.totalPages}
                   />
                   <Snackbar ref={this.snackbarRef} />
-                </Col>
+                </Col> */}
               </div>
             </Col>
           </Row>

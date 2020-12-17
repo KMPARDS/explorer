@@ -10,6 +10,8 @@ import CustomPagination from '../../Components/CustomPagination/CustomPagination
 import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import { toLocaleTimestamp } from '../../lib/parsers';
 import { ethers } from 'ethers';
+import { CustomDatatable } from '../../Components/CustomDatatable/CustomDatatable';
+import { nrtManager } from '../../ethereum/NrtManager';
 
 class Blocks extends Component {
   snackbarRef = React.createRef();
@@ -21,8 +23,8 @@ class Blocks extends Component {
         data: [],
         currentPage: 0,
         totalPages: 0,
-        isLoading: false,
       },
+      isLoading: true,
     };
 
     this.fetchBlocks = this.fetchBlocks.bind(this);
@@ -33,9 +35,13 @@ class Blocks extends Component {
     this.nrtTicker();
   }
 
-  async fetchBlocks(start, length = 10) {
+  async fetchBlocks({page, length = 10}) {
     try {
-      const res = await Apis.fetchBlocks(start, length);
+      await this.setState({isLoading: true });
+      const res = await Apis.fetchBlocks({page, length});
+      setTimeout(() => this.setState({isLoading: false }),1000);
+      
+      return res;
       if (res)
         this.setState({
           blocks: {
@@ -72,19 +78,8 @@ class Blocks extends Component {
     // let nextNrtTimestamp = deployTimestamp + monthDuration * (currentNrtMonthNumber + 1);
 
     setInterval(async () => {
-      try {
-        const res = await Apis.getCurrentNRTMonth();
-        if (!currentNrtMonthNumber) {
-          currentNrtMonthNumber = res.data.nrtMonth;
-        } else if (
-          res.data.nrtMonth !== currentNrtMonthNumber &&
-          !seeFutureNrt
-        ) {
-          window.location.reload();
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      currentNrtMonthNumber = await nrtManager.currentNrtMonth();
+      
     }, 3500);
 
     setInterval(() => {
@@ -145,7 +140,93 @@ class Blocks extends Component {
           <Row className="mt40">
             <Col lg={12}>
               <div className="card">
-                <div className="table-responsive">
+              <CustomDatatable
+               title="Blocks"
+               apiCallback={this.fetchBlocks}
+               countPerPage = {10}
+               columns={
+                 [
+                  {
+                    name: 'Block',
+                    cell: row => <>
+                    <AddressLink
+                                value={row.block_number}
+                                type="block"
+                              />
+                              </>
+                  },
+                  {
+                    name: 'Age',
+                    cell: row => <>{toLocaleTimestamp(row.timestamp).fromNow()}</>
+                  },
+                  {
+                    name: 'Transaction',
+                    cell: row => <>
+                    <Link
+                                to={{
+                                  pathname: 'txns' + '/' + row.block_number,
+                                  state: { value: row.block_number },
+                                }}
+                              >
+                                {row.raw_transactions_count}
+                              </Link></>
+                  },
+                  {
+                    name: 'Sealer',
+                    cell: row => <>
+                    <AddressLink
+                                value={row.miner.address}
+                                type="address"
+                              /></>
+                  },
+                  {
+                    name: 'Gas Used',
+                    cell: row => <>
+                    {
+                    (row.total_gas_used !== undefined 
+                                  && 
+                                row.total_gas_limit)
+                                ?
+                                <>
+                                {row.total_gas_used} (
+                                {(
+                                  (row.total_gas_used /
+                                    row.total_gas_limit) *
+                                  100
+                                ).toFixed(2)}
+                                %)
+                                </>
+                                :
+                                '-'
+                              }</>
+                  },
+                  {
+                    name: 'Gas Limit',
+                    cell: row => <>{row.total_gas_limit}</>
+                  },
+                  {
+                    name: 'Average Gas Price',
+                    cell: row => <>{row?.average_gas_price ?
+                      ethers.utils.formatEther(
+                        row.average_gas_price
+                      ) : 0}{' '}
+                    ES</>
+                  },
+                  {
+                    name: 'Reward',
+                    cell: row => <>
+                    {row.provisional_reward !== null ? (
+                                row.provisional_reward + 'ES'
+                              ) : (
+                                <i>pending for next NRT...</i>
+                              )}</>
+                  },
+                 ]
+               }
+                progressPending={this.state.isLoading}
+                progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
+               />
+                {/* <div className="table-responsive">
                   <table className="es-transaction table">
                     <tr>
                       <th
@@ -298,7 +379,7 @@ class Blocks extends Component {
                     totalPages={this.state.blocks.totalPages}
                   />
                   <Snackbar ref={this.snackbarRef} />
-                </Col>
+                </Col> */}
               </div>
             </Col>
           </Row>
