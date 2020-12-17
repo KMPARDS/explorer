@@ -1223,7 +1223,7 @@ class Homepage extends Component {
                         <div className="block-value">
                           <p className="block-text">RPC Url</p>
                           <p className="block-value">
-                          <small ><Link  className="text-white" to="https://eraswap.network/">https://eraswap.network/</Link></small>
+                          <small ><Link  className="text-white" to="https://mainnet.eraswap.network/">https://eraswap.network/</Link></small>
                           </p>
                         </div>
                       </div>
