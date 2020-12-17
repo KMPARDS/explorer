@@ -223,15 +223,33 @@ class Homepage extends Component {
 
   async fetchAverageBlock() {
     let res = [];
-    try {
-      res = await Apis.fetchAverageBlock();
-    } catch (e) {
-      console.log(e);
-    } finally {
+    // try {
+    //   res = await Apis.fetchAverageBlock();
+    // } catch (e) {
+    //   console.log(e);
+    // } finally {
+    //   this.setState({
+    //     averageBlock: res?.average ? (res?.average/1000).toFixed(2) : 0,
+    //     latestBlockNumber: res?.latestBlock?.block_number,
+    //   });
+    // }
+    try{
+      const RECORDS_COUNT = 1000;
+      const latestBlock = await providerESN.getBlock();
+      const toBlock = await providerESN.getBlock(latestBlock.number - RECORDS_COUNT);
+      
+      let timeInterval = 0;
+      if(toBlock)
+        timeInterval = latestBlock.timestamp  - toBlock.timestamp;
+
+      const average = (timeInterval / RECORDS_COUNT);
+      
       this.setState({
-        averageBlock: res?.average ? (res?.average/1000).toFixed(2) : 0,
-        latestBlockNumber: res?.latestBlock?.block_number,
+        averageBlock: average.toFixed(2),
+        latestBlockNumber: latestBlock.number
       });
+    }catch(e){
+      console.log('fetchAverageBlock',e);
     }
   }
 

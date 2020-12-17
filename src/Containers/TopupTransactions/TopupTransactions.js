@@ -96,6 +96,8 @@ class TopupTransactions extends Component {
                    },
                  ]
                }
+                progressPending={this.state.transactions.isLoading}
+                progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
                />
               </div>
             </Col>
