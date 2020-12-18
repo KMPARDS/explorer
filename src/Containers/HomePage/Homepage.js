@@ -45,6 +45,7 @@ class Homepage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      totalDelegation: 0,
       marketCap: 0,
       change1H: '-',
       change24H: '-',
@@ -263,6 +264,7 @@ class Homepage extends Component {
       if (month !== null) {
         const res = await Apis.fetchValidatorsWithLastBlock(month);
         console.log('Validators res', res);
+        let totalDelegation = ethers.constants.Zero;
         if (res && Array.isArray(res)) {
           let data = res;
           data.forEach((validator, i) => {
@@ -271,15 +273,23 @@ class Homepage extends Component {
               Number(formatEther(validator.amount));
             data[i].cummulativeStakes = this.cummulativeStakes;
             data[i].amount = Number(formatEther(validator.amount));
+
+            const validatorDelegationSum = validator
+              .delegatorstakings?.map(staking => ethers.BigNumber.from(staking.amount))
+              .reduce((sum,amount) => sum.add(amount));
+
+            totalDelegation = totalDelegation.add(validatorDelegationSum);
           });
           console.log({ data });
           data = data.sort((a, b) => (a.amount > b.amount ? -1 : 1));
 
+          console.log('totalDelegation: Number(ethers.utils.formatEther(totalDelegation)).toFixed(2)',Number(ethers.utils.formatEther(totalDelegation)).toFixed(2));
           this.setState({
             validators: {
               data,
               isLoading: false,
             },
+            totalDelegation: Number(ethers.utils.formatEther(totalDelegation)).toFixed(2)
           });
         }
       }
@@ -290,6 +300,7 @@ class Homepage extends Component {
           data: [],
           isLoading: false,
         },
+        totalDelegation: ethers.utils.formatEther
       });
     }
   }
@@ -609,7 +620,7 @@ class Homepage extends Component {
                             title="Era Swap Network Proof of Stake (ESN PoS)"
                           >ESNPOSCP Delegation</p>
                           <p className="era-value text-black">
-                            {this.state.totalESStaked} ES
+                            {this.state.totalDelegation} ES
                           </p>
                         </div>
                       </div>

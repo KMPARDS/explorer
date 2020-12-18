@@ -63,7 +63,7 @@ export default class Apis {
   static fetchValidatorsByMonth = (month) =>
     ajax(`${baseUrl}/validator/month/${month}`);
   static fetchValidatorsWithLastBlock = (month) =>
-    ajax(`${baseUrl}/validator/lastblock/${month}`);
+    ajax(`${baseUrl}/validator/lastblock/${16 || month}`);
 
   static fetchNodes = () => ajax(`${baseUrl}/nodestatus/`);
   static fetchTopNodes = ({ length = 10,page = 1 }) =>
