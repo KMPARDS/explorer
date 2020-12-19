@@ -71,6 +71,8 @@ export default class Apis {
 
   static fetchTopStakers = ({ length = 10, page = 1 }) =>
     ajax(`${baseUrl}/timeally-stakes/top?length=${length}&page=${page}`);
+  static fetchStakedAmount = (ownerAddress) =>
+    ajax(`${baseUrl}/timeally-stakes/${ownerAddress}`);
 
   static fetchESPrices = () => ajax(`${baseUrl}/es-price/top`);
 
