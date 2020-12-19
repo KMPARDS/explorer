@@ -31,7 +31,7 @@ const DAYSWAPPERS_ADDRESS = '0x1382AD4e3Ca34DCdaC3D6CEeD282913A49394234';
 const TIMEALLY_ADDRESS = '0xF3EFEeA0E535FB8640D1E64877DBE128b5baEdD3';
 const BURN_POOL_ADDRESS = '0xF8dd9146465A112be3bEf3f7dDcAB9b0b42CbaB5';
 const UNUSED_POWERTOKENS_ADDRESS = '0x7Ed40C491c79a717d5C64d34471eAeedC870c2a4';
-
+const CROWDFUND_STAKER_ADDRESS = '0xD00C9C5EdCfCF6F00401168E602Cd3b6faeF8c0E';
 const kycdappInst = KycDappFactory.connect(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.kycdapp,providerESN);
 // const nrtManager = nrtManager;
 
@@ -81,6 +81,7 @@ class Dashboard extends Component {
       volumeOfES: 'Loading...',
       totalTransactions: 'Loading...',
       availableSupply: 'Loading...',
+      crowdfundStakeAmt: 'Loading...',
       platformWiseTFC: {
         data: {
           timeswappers: 'Loading...',
@@ -293,8 +294,25 @@ class Dashboard extends Component {
     this.fetchSurveyDappDetails().catch(e => console.log('fetchSurveyDappDetails error',e));
     this.fetchRewardsFromNRT().catch(e => console.log('fetchRewardsFromNRT error',e));
     this.fetchAirDropRewards().catch(e => console.log('fetchAirDropRewards error',e));
+    this.fetchCrowdFundStakes().catch(e => console.log('fetchCrowdFundStakes error',e));
     
-    this.nrtTicker();
+    this.nrtTicker(); 
+  }
+
+  async fetchCrowdFundStakes(){
+    try{
+      const resp = await Apis.fetchStakedAmount(CROWDFUND_STAKER_ADDRESS);
+      console.log('fetchCrowdFundStakes res',resp);
+      
+      const stakeAmt = resp
+        .map(staking => Number(ethers.utils.formatEther(staking.stakedAmt)))
+        .reduce((sum,stakeAmt) => +sum+Number(stakeAmt));
+      this.setState({
+        crowdfundStakeAmt: stakeAmt
+      });
+    }catch(e){
+      console.log(e);
+    }
   }
 
   async fetchAvailableSupply(){
@@ -514,11 +532,11 @@ class Dashboard extends Component {
       .map(log => kycInst.interface.parseLog(log))
       .filter(log => log.args['newKycStatus'] === 1).length
       
-      const kycDappBal = await providerESN.getBalance(KYCDAPP_ADDRESS);
+      // const kycDappBal = await providerESN.getBalance(KYCDAPP_ADDRESS);
 
       this.setState({
         kycApprovedCount: approvedKycsCount,
-        kycDappBal: ethers.utils.formatEther(kycDappBal)
+        // kycDappBal: ethers.utils.formatEther(kycDappBal)
       });
     }catch(e){
       console.log('getKycData error',e);
@@ -1951,14 +1969,14 @@ class Dashboard extends Component {
                 </Card>
               </Col>
 
-              <Col sm={6} lg={3}>
+              {/* <Col sm={6} lg={3}>
                 <Card className=" ">
                   <Card.Body>
                     <p className="sect-txt-bold">KYC Pending Bucket </p>
               <p className="value-dash-txt">{this.state.kycDappBal} ES</p>
                   </Card.Body>
                 </Card>
-              </Col>
+              </Col> */}
               <Col sm={6} lg={3}>
                 <Card className="">
                   <Card.Body>
@@ -1967,6 +1985,15 @@ class Dashboard extends Component {
                   </Card.Body>
                 </Card>
               </Col>
+              <Col sm={6} lg={3}>
+                <Card className="">
+                  <Card.Body>
+                    <p className="sect-txt-bold">Reserves for Crowd Fund phase 2 & 3 in Staking </p>
+              <p className="value-dash-txt">{this.state.crowdfundStakeAmt} ES</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+              
             
             </Row>
 
