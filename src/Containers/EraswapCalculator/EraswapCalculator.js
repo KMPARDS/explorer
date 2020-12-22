@@ -377,7 +377,7 @@ class EraswapCalculator extends Component {
                     <tr>
                       <td>Profit</td>
                       <td>
-                        <span class="text-success">${monthlyProfit}</span>
+                        <span class="text-success">${monthlyProfit * 12}</span>
                       </td>
                     </tr>
                   </thead>
