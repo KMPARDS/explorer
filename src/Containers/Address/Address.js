@@ -13,6 +13,7 @@ import { ethers, providers } from 'ethers';
 import CustomPagination from '../../Components/CustomPagination/CustomPagination';
 import config from '../../config/config';
 import { providerESN } from '../../ethereum/Provider';
+import { Badge } from 'react-bootstrap';
 
 class Address extends Component {
   snackbarRef = React.createRef();
@@ -34,7 +35,7 @@ class Address extends Component {
       transactions: {
         data: {},
         total: 0,
-        isLoading: false,
+        isLoading: true,
       },
     };
 
@@ -61,7 +62,7 @@ class Address extends Component {
           transactions: {
             data: {},
             total: 0,
-            isLoading: false,
+            isLoading: true,
           },
         },
         () => {
@@ -212,9 +213,9 @@ class Address extends Component {
                   id="uncontrolled-tab-example"
                 >
                   <Tab eventKey="transactions" title="Transactions">
-                    {this.state.isLoading
+                    {this.state.transactions.isLoading
                       ? 'Loading...'
-                      : `Showing ${this.state.transactions.data.length} of ${this.state.transactions.total}`}
+                      : `Showing ${this.state.transactions.data?.length  || 0} of ${this.state.transactions.total+1}`}
                     <div className="card">
                       <div className="table-responsive">
                         <table className="es-transaction table">
@@ -258,6 +259,13 @@ class Address extends Component {
                               <th
                                 data-toggle="tooltip"
                                 data-placement="top"
+                                title=""
+                              >
+                                In / Out
+                              </th>
+                              <th
+                                data-toggle="tooltip"
+                                data-placement="top"
                                 title="The amount of era swap sent with this Transaction"
                               >
                                 Value
@@ -274,7 +282,7 @@ class Address extends Component {
                           <tbody>
                             {this.state.transactions.isLoading ? (
                               <tr>
-                                <td colSpan="7">Loading...</td>
+                                <td colSpan="8">Loading...</td>
                               </tr>
                             ) : this.state.transactions.data?.length ? (
                               this.state.transactions.data?.map(
@@ -324,14 +332,14 @@ class Address extends Component {
                                         </span>
                                       </td>
                                       <td>
-                                        {transaction.fromAddress.label && (
+                                        {transaction.toAddress.label && (
                                           <Link
                                             to={
                                               '/' +
-                                              transaction.fromAddress.address
+                                              transaction.toAddress.address
                                             }
                                           >
-                                            {transaction.fromAddress.label}
+                                            {transaction.toAddress.label}
                                           </Link>
                                         )}
                                         <span className="tr-color-txt">
@@ -341,11 +349,18 @@ class Address extends Component {
                                             }
                                             type="address"
                                             shrink={
-                                              transaction.fromAddress.label
+                                              transaction.toAddress.label
                                                 .length
                                             }
                                           />
                                         </span>
+                                      </td>
+                                      <td>
+                                      {
+                                        transaction.fromAddress.address.toLowerCase() === this.props.match.params.address.toLowerCase()
+                                        ? <Badge variant="warning">Out</Badge>
+                                        : <Badge variant="info">In</Badge>
+                                      } 
                                       </td>
                                       <td>
                                         {ethers.utils.formatEther(
@@ -360,7 +375,7 @@ class Address extends Component {
                               )
                             ) : (
                               <tr>
-                                <td colSpan="7">No Transactions</td>
+                                <td colSpan="8">No Transactions</td>
                               </tr>
                             )}
                           </tbody>
