@@ -40,11 +40,11 @@ export default class Apis {
     );
   };
   static fetchTransaction = (hash) => ajax(`${baseUrl}/transaction/${hash}`);
-  static fetchTransactionsByAddress = (address, limit = 25) =>
-    ajax(`${baseUrl}/transaction/address/${address}?limit=${limit}`);
+  static fetchTransactionsByAddress = ({address, length = 25,page = 1}) =>
+    ajax(`${baseUrl}/transaction/address/${address}?length=${length}&page=${page}`);
   static fetchTransactionsInterval = () =>
     ajax(`${baseUrl}/transaction/range/interval`);
-  static fetchTransactionsCount = () => ajax(`${baseUrl}/transaction/count`);
+  static fetchTransactionsCount = () => ajax(`${baseUrl}/tra  nsaction/count`);
   static fetchAllTxnsCount = () => ajax(`${baseUrl}/transaction/count/all`);
   static fetchInternalTransactionsByHash = (hash) =>
     ajax(`${baseUrl}/internal-transaction/hash/${hash}`);
