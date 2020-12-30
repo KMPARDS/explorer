@@ -44,7 +44,7 @@ export default class Apis {
     ajax(`${baseUrl}/transaction/address/${address}?length=${length}&page=${page}`);
   static fetchTransactionsInterval = () =>
     ajax(`${baseUrl}/transaction/range/interval`);
-  static fetchTransactionsCount = () => ajax(`${baseUrl}/tra  nsaction/count`);
+  static fetchTransactionsCount = () => ajax(`${baseUrl}/transaction/count`);
   static fetchAllTxnsCount = () => ajax(`${baseUrl}/transaction/count/all`);
   static fetchInternalTransactionsByHash = (hash) =>
     ajax(`${baseUrl}/internal-transaction/hash/${hash}`);
