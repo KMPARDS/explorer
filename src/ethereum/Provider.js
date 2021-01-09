@@ -2,7 +2,7 @@ const { ethers } = require('ethers');
 const { nodeUrl } = require('../config/config');
 const { es } = require('eraswap-sdk');
 
-export const providerESN = new es.CustomProvider(process.env.REACT_APP_NODE_ENV === 'development' ? 'testnet' : 'mainnet');
+export const providerESN = new es.CustomProvider('mainnet');
 // const providerESN = new ethers.providers.JsonRpcProvider('https://node2.testnet.eraswap.network');
 
 export const providerEth = ethers.getDefaultProvider(process.env.REACT_APP_NODE_ENV === 'development' ? 'rinkeby' : 'homestead', {
@@ -11,7 +11,7 @@ export const providerEth = ethers.getDefaultProvider(process.env.REACT_APP_NODE_
 
 export const surveyInstance = es.typechain.ESN.BuildSurveyFactory.connect(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.buildSurvey,providerESN);
 
-export const prepaidInstance = es.typechain.ESN.PrepaidEsFactory.connect(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.prepaidEs,providerESN);
+export const prepaidInstance = es.typechain.ESN.PrepaidEsFactory.connect(es.addresses.production.ESN.prepaidEs,providerESN);
 // module.exports = {
 //   providerEth,
 //   providerESN,
@@ -20,3 +20,4 @@ export const prepaidInstance = es.typechain.ESN.PrepaidEsFactory.connect(es.addr
 window.providerESN = providerESN;
 window.providerEth = providerEth;
 window.surveyInstance = surveyInstance;
+window.prepaidInstance = prepaidInstance;

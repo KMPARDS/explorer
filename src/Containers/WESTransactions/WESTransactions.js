@@ -38,12 +38,17 @@ class WESTransactions extends Component {
         isLoading: true
       });
       const wesTransactions = (await prepaidInstance.queryFilter(prepaidInstance.filters.Transfer(null,null,null)))
-        .map(log => prepaidInstance.interface.parseLog(log))
+        .map(log =>({
+          ...prepaidInstance.interface.parseLog(log),
+          blockNumber: log.blockNumber
+        }))
         .map(log => ({
           from: log.args['from'],
           to: log.args['to'],
-          tokens: log.args['tokens']
-        }));
+          tokens: log.args['tokens'],
+          blockNumber: log.blockNumber,
+        }))
+        .sort((a,b) => a.blockNumber > b.blockNumber ? -1 : 1);
 
         this.setState({ 
           wesTransactions,
