@@ -13,7 +13,10 @@ import { ethers, providers } from 'ethers';
 import CustomPagination from '../../Components/CustomPagination/CustomPagination';
 import config from '../../config/config';
 import { providerESN } from '../../ethereum/Provider';
+import { Badge } from 'react-bootstrap';
+import { CustomDatatable } from '../../Components/CustomDatatable/CustomDatatable';
 
+const COUNT_PER_PAGE = 10;
 class Address extends Component {
   snackbarRef = React.createRef();
 
@@ -34,7 +37,7 @@ class Address extends Component {
       transactions: {
         data: {},
         total: 0,
-        isLoading: false,
+        isLoading: true,
       },
     };
 
@@ -43,7 +46,7 @@ class Address extends Component {
 
   componentDidMount() {
     this.fetchAddress();
-    this.fetchTransactionsByAddress();
+    // this.fetchTransactionsByAddress();
     // this.fetchBalance();
     // this.fetchNativeBalance();
   }
@@ -61,13 +64,13 @@ class Address extends Component {
           transactions: {
             data: {},
             total: 0,
-            isLoading: false,
+            isLoading: true,
           },
         },
         () => {
           // this.fetchNativeBalance();
           this.fetchAddress();
-          this.fetchTransactionsByAddress();
+          // this.fetchTransactionsByAddress();
           // this.fetchBalance();
         }
       );
@@ -113,28 +116,24 @@ class Address extends Component {
     }
   }
 
-  async fetchTransactionsByAddress() {
-    try {
-      const res = await Apis.fetchTransactionsByAddress(this.state.address);
-
-      this.setState({
-        transactions: {
-          data: res?.data || [],
-          total: res?.total || 0,
-          isLoading: false,
-        },
-      });
-    } catch (e) {
-      console.log(e);
-      this.openSnackBar(e);
-      this.setState({
-        transactions: {
-          ...this.state.transactions,
-          data: [],
-          isLoading: false,
-        },
-      });
-    }
+  fetchTransactionsByAddress = async ({length,page}) => {
+    await this.setState({
+      transactions: {
+        data: [],
+        isLoading: true,
+      }
+    })
+    const res = await Apis.fetchTransactionsByAddress({address: this.state.address,length,page});
+    this.setState({
+      transactions: {
+        data: res?.data || [],
+        isLoading: false,
+      }
+    })
+    return {
+      data: res.data,
+      totalPages: res.total
+    };
   }
 
   openSnackBar(message) {
@@ -218,11 +217,129 @@ class Address extends Component {
                   id="uncontrolled-tab-example"
                 >
                   <Tab eventKey="transactions" title="Transactions">
-                    {this.state.isLoading
+                    {/* {this.state.transactions.isLoading
                       ? 'Loading...'
-                      : `Showing ${this.state.transactions.data.length} of ${this.state.transactions.total}`}
+                      : `Showing ${this.state.transactions.data?.length  || 0} of ${this.state.transactions.total+1}`} */}
                     <div className="card">
-                      <div className="table-responsive">
+                    <CustomDatatable
+                      title="Transactions"
+                      apiCallback={this.fetchTransactionsByAddress}
+                      countPerPage = {COUNT_PER_PAGE}
+                      columns={
+                        [
+                          {
+                            name: 'Transaction Hash',
+                            selector: '',
+                            cell: row => <><AddressLink
+                              value={row.txn_hash}
+                              type="txn"
+                              shrink={true}
+                            /></>
+                          },
+                          {
+                            name: 'Block',
+                            // selector: 'block.block_number',
+                            cell: row => <>
+                            <AddressLink
+                                          value={row.block.block_number}
+                                          type="block"
+                                        /></>
+                          },
+                          {
+                            name: 'Age',
+                            selector: '',
+                            cell: row => <>
+                            {toLocaleTimestamp(
+                                          row.createdOn
+                                        ).fromNow()}</>
+                          },
+                          {
+                            name: 'From',
+                            selector: '',
+                            cell: row => <>
+                            {row.fromAddress.label && (
+                                          <Link
+                                            to={
+                                              '/' +
+                                              row.fromAddress.address
+                                            }
+                                          >
+                                            {row.fromAddress.label}
+                                          </Link>
+                                        )}
+                                        <span className="tr-color-txt">
+                                          <AddressLink
+                                            value={
+                                              row.fromAddress.address
+                                            }
+                                            type="address"
+                                            shrink={
+                                              true
+                                            }
+                                          />
+                                        </span>
+                            </>
+                          },
+                          {
+                            name: 'To',
+                            selector: '',
+                            cell: row => <>
+                            {row.toAddress.label && (
+                                          <Link
+                                            to={
+                                              '/' +
+                                              row.toAddress.address
+                                            }
+                                          >
+                                            {row.toAddress.label}
+                                          </Link>
+                                        )}
+                                        <span className="tr-color-txt">
+                                          <AddressLink
+                                            value={
+                                              row.toAddress.address
+                                            }
+                                            type="address"
+                                            shrink={
+                                              true
+                                            }
+                                          />
+                                        </span>
+                            </>
+                          },
+                          {
+                            name: 'In / Out',
+                            selector: '',
+                            cell: row => <>{
+                              row.fromAddress.address.toLowerCase() === this.props.match.params.address.toLowerCase()
+                              ? <Badge variant="warning">Out</Badge>
+                              : <Badge variant="info">In</Badge>
+                            } </>
+                          },
+                          {
+                            name: 'Value',
+                            selector: '',
+                            cell: row => <>
+                            {ethers.utils.formatEther(
+                                          row.value
+                                        )}{' '}
+                                        ES{' '}
+                                      
+                                      </>
+                          },
+                          {
+                            name: '(Transaction Fee)',
+                            selector: '',
+                            cell: row => <>
+                            0.000546
+                            </>
+                          },
+                        ]
+                      }
+                        progressPending={this.state.transactions.isLoading}
+                        progressComponent={<h5><i className="fa fa-spinner fa-spin"></i></h5>}
+                      />
+                      {/* <div className="table-responsive">
                         <table className="es-transaction table">
                           <thead>
                             <tr>
@@ -264,6 +381,13 @@ class Address extends Component {
                               <th
                                 data-toggle="tooltip"
                                 data-placement="top"
+                                title=""
+                              >
+                                In / Out
+                              </th>
+                              <th
+                                data-toggle="tooltip"
+                                data-placement="top"
                                 title="The amount of era swap sent with this Transaction"
                               >
                                 Value
@@ -280,7 +404,7 @@ class Address extends Component {
                           <tbody>
                             {this.state.transactions.isLoading ? (
                               <tr>
-                                <td colSpan="7">Loading...</td>
+                                <td colSpan="8">Loading...</td>
                               </tr>
                             ) : this.state.transactions.data?.length ? (
                               this.state.transactions.data?.map(
@@ -330,14 +454,14 @@ class Address extends Component {
                                         </span>
                                       </td>
                                       <td>
-                                        {transaction.fromAddress.label && (
+                                        {transaction.toAddress.label && (
                                           <Link
                                             to={
                                               '/' +
-                                              transaction.fromAddress.address
+                                              transaction.toAddress.address
                                             }
                                           >
-                                            {transaction.fromAddress.label}
+                                            {transaction.toAddress.label}
                                           </Link>
                                         )}
                                         <span className="tr-color-txt">
@@ -347,11 +471,18 @@ class Address extends Component {
                                             }
                                             type="address"
                                             shrink={
-                                              transaction.fromAddress.label
+                                              transaction.toAddress.label
                                                 .length
                                             }
                                           />
                                         </span>
+                                      </td>
+                                      <td>
+                                      {
+                                        transaction.fromAddress.address.toLowerCase() === this.props.match.params.address.toLowerCase()
+                                        ? <Badge variant="warning">Out</Badge>
+                                        : <Badge variant="info">In</Badge>
+                                      } 
                                       </td>
                                       <td>
                                         {ethers.utils.formatEther(
@@ -366,12 +497,12 @@ class Address extends Component {
                               )
                             ) : (
                               <tr>
-                                <td colSpan="7">No Transactions</td>
+                                <td colSpan="8">No Transactions</td>
                               </tr>
                             )}
                           </tbody>
                         </table>
-                      </div>
+                      </div> */}
                     </div>
                     <Snackbar ref={this.snackbarRef} />
                   </Tab>

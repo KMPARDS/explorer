@@ -27,8 +27,8 @@ export default class Apis {
     ajax(`${baseUrl}/address/top-txn-received?length=${length}&page=${page}`);
   static fetchTopAccTxnCount = ({ length = 10, page = 1 }) =>
     ajax(`${baseUrl}/address/top-acc-txn-count?length=${length}&page=${page}`);
-  static fetchBlocks = (start = 0, length = 10) =>
-    ajax(`${baseUrl}/block/?start=${start}&length=${length}`);
+  static fetchBlocks = ({page = 1, length = 10}) =>
+    ajax(`${baseUrl}/block/?page=${page}&length=${length}`);
   static fetchBlock = (blockNumber) => ajax(`${baseUrl}/block/${blockNumber}`);
   static fetchAverageBlock = () => ajax(`${baseUrl}/block/average`);
   static fetchTransactions = (start = 0, length = 10, blockNumber = null) => {
@@ -40,8 +40,8 @@ export default class Apis {
     );
   };
   static fetchTransaction = (hash) => ajax(`${baseUrl}/transaction/${hash}`);
-  static fetchTransactionsByAddress = (address, limit = 25) =>
-    ajax(`${baseUrl}/transaction/address/${address}?limit=${limit}`);
+  static fetchTransactionsByAddress = ({address, length = 25,page = 1}) =>
+    ajax(`${baseUrl}/transaction/address/${address}?length=${length}&page=${page}`);
   static fetchTransactionsInterval = () =>
     ajax(`${baseUrl}/transaction/range/interval`);
   static fetchTransactionsCount = () => ajax(`${baseUrl}/transaction/count`);
@@ -63,7 +63,7 @@ export default class Apis {
   static fetchValidatorsByMonth = (month) =>
     ajax(`${baseUrl}/validator/month/${month}`);
   static fetchValidatorsWithLastBlock = (month) =>
-    ajax(`${baseUrl}/validator/lastblock/${month}`);
+    ajax(`${baseUrl}/validator/lastblock/${16 || month}`);
 
   static fetchNodes = () => ajax(`${baseUrl}/nodestatus/`);
   static fetchTopNodes = ({ length = 10,page = 1 }) =>
@@ -71,6 +71,8 @@ export default class Apis {
 
   static fetchTopStakers = ({ length = 10, page = 1 }) =>
     ajax(`${baseUrl}/timeally-stakes/top?length=${length}&page=${page}`);
+  static fetchStakedAmount = (ownerAddress) =>
+    ajax(`${baseUrl}/timeally-stakes/${ownerAddress}`);
 
   static fetchESPrices = () => ajax(`${baseUrl}/es-price/top`);
 

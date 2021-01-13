@@ -30,6 +30,7 @@ import { nrtAddress } from '../../config/config';
 import { providerESN } from '../../ethereum/Provider';
 import { es } from 'eraswap-sdk/dist';
 import { routine } from 'eraswap-sdk/dist/utils';
+import { NodesTable } from '../Nodestatus/NodesTable/NodesTable';
 
 const MAX_SUPPLY = 9100000000;
 const BURN_POOL_ADDRESS = '0xF8dd9146465A112be3bEf3f7dDcAB9b0b42CbaB5';
@@ -44,6 +45,7 @@ class Homepage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      totalDelegation: 0,
       marketCap: 0,
       change1H: '-',
       change24H: '-',
@@ -96,11 +98,15 @@ class Homepage extends Component {
   async loadData(){
     try{
       await this.fetchNRTMonth();
-      this.intervalIds.push(routine(() => this.fetchBlocks(),1500));
-      this.intervalIds.push(routine(() => this.fetchTransactions(),1500));
-      this.intervalIds.push(routine(() => this.fetchBunches(),1500));
-      this.intervalIds.push(routine(() => this.fetchAverageBlock(),1500));
+      // this.intervalIds.push(routine(() => this.fetchBlocks(),1500));
+      // this.intervalIds.push(routine(() => this.fetchTransactions(),1500));
+      // this.intervalIds.push(routine(() => this.fetchBunches(),1500));
+      // this.intervalIds.push(routine(() => this.fetchAverageBlock(),1500));
       
+      this.fetchBlocks();
+      this.fetchTransactions();
+      this.fetchBunches();
+      this.fetchAverageBlock();
       // this.fetchTransactions().catch((e) => console.log(e));
       // this.fetchBunches().catch((e) => console.log(e));
       this.fetchESPrice().catch((e) => console.log(e));
@@ -222,15 +228,33 @@ class Homepage extends Component {
 
   async fetchAverageBlock() {
     let res = [];
-    try {
-      res = await Apis.fetchAverageBlock();
-    } catch (e) {
-      console.log(e);
-    } finally {
+    // try {
+    //   res = await Apis.fetchAverageBlock();
+    // } catch (e) {
+    //   console.log(e);
+    // } finally {
+    //   this.setState({
+    //     averageBlock: res?.average ? (res?.average/1000).toFixed(2) : 0,
+    //     latestBlockNumber: res?.latestBlock?.block_number,
+    //   });
+    // }
+    try{
+      const RECORDS_COUNT = 1000;
+      const latestBlock = await providerESN.getBlock();
+      const toBlock = await providerESN.getBlock(latestBlock.number - RECORDS_COUNT);
+      
+      let timeInterval = 0;
+      if(toBlock)
+        timeInterval = latestBlock.timestamp  - toBlock.timestamp;
+
+      const average = (timeInterval / RECORDS_COUNT);
+      
       this.setState({
-        averageBlock: res?.average ? (res?.average/1000).toFixed(2) : 0,
-        latestBlockNumber: res?.latestBlock?.block_number,
+        averageBlock: average.toFixed(2),
+        latestBlockNumber: latestBlock.number
       });
+    }catch(e){
+      console.log('fetchAverageBlock',e);
     }
   }
 
@@ -240,6 +264,7 @@ class Homepage extends Component {
       if (month !== null) {
         const res = await Apis.fetchValidatorsWithLastBlock(month);
         console.log('Validators res', res);
+        let totalDelegation = ethers.constants.Zero;
         if (res && Array.isArray(res)) {
           let data = res;
           data.forEach((validator, i) => {
@@ -248,15 +273,23 @@ class Homepage extends Component {
               Number(formatEther(validator.amount));
             data[i].cummulativeStakes = this.cummulativeStakes;
             data[i].amount = Number(formatEther(validator.amount));
+
+            const validatorDelegationSum = validator
+              .delegatorstakings?.map(staking => ethers.BigNumber.from(staking.amount))
+              .reduce((sum,amount) => sum.add(amount));
+
+            totalDelegation = totalDelegation.add(validatorDelegationSum);
           });
           console.log({ data });
           data = data.sort((a, b) => (a.amount > b.amount ? -1 : 1));
 
+          console.log('totalDelegation: Number(ethers.utils.formatEther(totalDelegation)).toFixed(2)',Number(ethers.utils.formatEther(totalDelegation)).toFixed(2));
           this.setState({
             validators: {
               data,
               isLoading: false,
             },
+            totalDelegation: Number(ethers.utils.formatEther(totalDelegation)).toFixed(2)
           });
         }
       }
@@ -267,6 +300,7 @@ class Homepage extends Component {
           data: [],
           isLoading: false,
         },
+        totalDelegation: ethers.utils.formatEther
       });
     }
   }
@@ -584,9 +618,9 @@ class Homepage extends Component {
                             data-toggle="tooltip"
                             data-placement="top"
                             title="Era Swap Network Proof of Stake (ESN PoS)"
-                          >AMOUNT OF STAKINGS</p>
+                          >ESNPOSCP Delegation</p>
                           <p className="era-value text-black">
-                            {this.state.totalESStaked} ES
+                            {this.state.totalDelegation} ES
                           </p>
                         </div>
                       </div>
@@ -899,7 +933,7 @@ class Homepage extends Component {
                                   {block.provisional_reward ? (
                                     block.provisional_reward
                                   ) : (
-                                    <i>pending for Next NRT...</i>
+                                    <i>Time Remaining for  Next NRT released...</i>
                                   )}
                                 </div>{' '}
                               </td>
@@ -946,7 +980,7 @@ class Homepage extends Component {
                                   <div className="sub-frst">
                                     {moment(
                                       moment(
-                                        transaction.timestamp
+                                        transaction.block.timestamp
                                       ).toDate()
                                     ).fromNow()}
                                   </div>
@@ -955,14 +989,14 @@ class Homepage extends Component {
                                   <span className="">
                                     From:{' '}
                                     <AddressLink
-                                      value={transaction?.fromAddress}
+                                      value={transaction?.fromAddress.address}
                                       type="address"
                                       shrink={true}
                                     />
                                     <br></br>
                                     To:{' '}
                                     <AddressLink
-                                      value={transaction?.toAddress}
+                                      value={transaction?.toAddress.address}
                                       type="address"
                                       shrink={true}
                                     />
@@ -992,6 +1026,7 @@ class Homepage extends Component {
           </Container>
 
           <Container>
+
             <Row>
               <Col lg={12}>
                 <div className="second-section-es mt40 card purpalebg ">
@@ -1044,7 +1079,24 @@ class Homepage extends Component {
                       </div>
                     </Col>
                   </Row>
-                  {/* <Row className="mt30">
+                 {/* 2nd row */}
+                 <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Side-chain Framework used</p>
+                          <p className="block-value">
+                            <small className="text-white">Deposit based Plasma Framework</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
                     <Col lg={4} className="">
                       <div className="block-bg">
                         <div className="escolor-pic1">
@@ -1054,15 +1106,169 @@ class Homepage extends Component {
                           />
                         </div>
                         <div className="block-value">
-                          <p className="block-text">CURRENT LEADER</p>
-                          <p className="">Eraswap Node</p>
+                          <p className="block-text">Software Used</p>
+                          <p className="block-value">
+                          <small className="text-white">EVM V1.0 Bytecode</small>
+                          </p>
                         </div>
                       </div>
                     </Col>
-                    <Col lg={8} className="">
-                      <div className="block-bg"></div>
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Stable Release</p>
+                          <p className="block-value">
+                          <small className="text-white">OpenEthereum v3.1.0</small>
+                          </p>
+                        </div>
+                      </div>
                     </Col>
-                  </Row> */}
+                  </Row>
+                
+                {/* end 2nd row */}
+
+
+                <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Written In</p>
+                          <p className="block-value">
+                          <small className="text-white">Rust & Solidity</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Platform</p>
+                          <p className="block-value">
+                          <small className="text-white">x86-64,ARM</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Operating System </p>
+                          <p className="block-value">
+                          <small className="text-white">Distributed Computing</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                
+                  {/* end3rd row */}
+
+
+                
+                  <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Hashing Algorithm</p>
+                          <p className="block-value">
+                          <small className="text-white">Keccak</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Chain ID</p>
+                          <p className="block-value">
+                          <small className="text-white">0x144d</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                
+
+                    <Col lg={4} className="">
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">RPC Url</p>
+                          <p className="block-value">
+                          <small style={{fontSize:'16px'}}><Link  className="text-white" to="https://mainnet.eraswap.network/">https://mainnet.eraswap.network/</Link></small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                
+                  {/* end 4th row */}
+
+                  <Row>
+                    <Col lg={4}>
+                      <div className="block-bg">
+                        <div className="escolor-pic1">
+                          <img
+                            src={Images.path.escolor}
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="block-value">
+                          <p className="block-text">Transactions/Day</p>
+                          <p className="block-value">
+                            <small className="text-white">8.6 Million +</small>
+                          </p>
+                        </div>
+                      </div>
+                    </Col>
+                    </Row>
+
+                    {/* end last row */}
+
+                 
                 </div>
               </Col>
             </Row>
@@ -1167,11 +1373,21 @@ class Homepage extends Component {
               </Col>
             </Row>
           </Container> */}
-
+          <Container>
+            {/* <Row className="mt40">
+              <Col lg={12}>
+            
+          <NodesTable />
+          </Col>
+          </Row> */}
+          </Container>
+          {this.state.validators.data.length
+          ?
           <Container>
             <Row className="mt40">
               <Col lg={12}>
                 <div className="second-section-es card purpalebg">
+                <h4>Validator Stakings</h4>
                   <div className="table-responsive">
                     <table className="table table-bordered purple-table">
                       <tr>
@@ -1184,9 +1400,10 @@ class Homepage extends Component {
                         <th data-toggle="tooltip" data-placement="top" title="">
                           STAKE (ES){' '}
                         </th>
-                        {/* <th data-toggle="tooltip" data-placement="top" title="">
-                          CUMULATIVE STAKE (ES)
-                        </th> */}
+                        <th data-toggle="tooltip" data-placement="top" title="">
+                          {/* CUMULATIVE STAKE (ES) */}
+                          ADJUSTED AMOUNT (ES)
+                        </th>
                         <th data-toggle="tooltip" data-placement="top" title="">
                           FEE
                         </th>
@@ -1248,7 +1465,8 @@ class Homepage extends Component {
               </Col>
             </Row>
           </Container>
-
+        :
+        <></>}
           <Container>
             <Row className="mt40">
               <Col lg={12}>

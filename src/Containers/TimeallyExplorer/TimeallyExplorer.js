@@ -104,7 +104,7 @@ class TimeallyExplorer extends Component {
                         <td>
                           <a
                             className="btn btn-primary"
-                            href={`https://test.timeally.io/stakings/${stakingAddress.staking}`}
+                            href={`https://timeally.io/stakings/${stakingAddress.staking}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

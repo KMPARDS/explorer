@@ -168,7 +168,7 @@ class Navbar extends Component {
 
 
                   <Link className="dropdown-item" to="/txns/pending">
-                    View Pending Transations
+                    View Pending Transactions
                   </Link>
                   <Link className="dropdown-item" to="/txns/failed">
                     View Cancelled Transactions

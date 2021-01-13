@@ -72,10 +72,10 @@ class TopAccountsbyEsBalance extends Component {
                       name: 'Address',
                       cell: row => <AddressLink value={row.address} type="address" shrink={true} />
                     },
-                    {
-                      name: 'Stake',
-                      cell: row => row.stakes ? formatEther(row.stakes) : 0
-                    },
+                    // {
+                    //   name: 'Stake',
+                    //   cell: row => row.stakes ? formatEther(row.stakes) : 0
+                    // },
                     {
                       name: 'Balance',
                       cell: row => formatEther(row.balance || '0x0')

@@ -21,3 +21,4 @@ export const prepaidInstance = es.typechain.ESN.PrepaidEsFactory.connect(es.addr
 window.providerESN = providerESN;
 window.providerEth = providerEth;
 window.surveyInstance = surveyInstance;
+window.prepaidInstance = prepaidInstance;

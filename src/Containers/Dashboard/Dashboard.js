@@ -31,7 +31,7 @@ const DAYSWAPPERS_ADDRESS = '0x1382AD4e3Ca34DCdaC3D6CEeD282913A49394234';
 const TIMEALLY_ADDRESS = '0xF3EFEeA0E535FB8640D1E64877DBE128b5baEdD3';
 const BURN_POOL_ADDRESS = '0xF8dd9146465A112be3bEf3f7dDcAB9b0b42CbaB5';
 const UNUSED_POWERTOKENS_ADDRESS = '0x7Ed40C491c79a717d5C64d34471eAeedC870c2a4';
-
+const CROWDFUND_STAKER_ADDRESS = '0xD00C9C5EdCfCF6F00401168E602Cd3b6faeF8c0E';
 const kycdappInst = KycDappFactory.connect(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.kycdapp,providerESN);
 // const nrtManager = nrtManager;
 
@@ -81,6 +81,7 @@ class Dashboard extends Component {
       volumeOfES: 'Loading...',
       totalTransactions: 'Loading...',
       availableSupply: 'Loading...',
+      crowdfundStakeAmt: 'Loading...',
       platformWiseTFC: {
         data: {
           timeswappers: 'Loading...',
@@ -293,8 +294,25 @@ class Dashboard extends Component {
     this.fetchSurveyDappDetails().catch(e => console.log('fetchSurveyDappDetails error',e));
     this.fetchRewardsFromNRT().catch(e => console.log('fetchRewardsFromNRT error',e));
     this.fetchAirDropRewards().catch(e => console.log('fetchAirDropRewards error',e));
+    this.fetchCrowdFundStakes().catch(e => console.log('fetchCrowdFundStakes error',e));
     
-    this.nrtTicker();
+    this.nrtTicker(); 
+  }
+
+  async fetchCrowdFundStakes(){
+    try{
+      const resp = await Apis.fetchStakedAmount(CROWDFUND_STAKER_ADDRESS);
+      console.log('fetchCrowdFundStakes res',resp);
+      
+      const stakeAmt = resp
+        .map(staking => Number(ethers.utils.formatEther(staking.stakedAmt)))
+        .reduce((sum,stakeAmt) => +sum+Number(stakeAmt));
+      this.setState({
+        crowdfundStakeAmt: stakeAmt
+      });
+    }catch(e){
+      console.log(e);
+    }
   }
 
   async fetchAvailableSupply(){
@@ -315,7 +333,7 @@ class Dashboard extends Component {
       const airdropData = await Apis.fetchAddress(await kycdappInst.resolveAddress(airDropUsername))
       if(airdropData?.totalESSent){
         this.setState({
-          airdropRewards: +PREV_AIRDROP + formatEther(airdropData.totalESSent)
+          airdropRewards: +PREV_AIRDROP + Number(formatEther(airdropData.totalESSent))
         });
       } else {
         this.setState({
@@ -514,11 +532,11 @@ class Dashboard extends Component {
       .map(log => kycInst.interface.parseLog(log))
       .filter(log => log.args['newKycStatus'] === 1).length
       
-      const kycDappBal = await providerESN.getBalance(KYCDAPP_ADDRESS);
+      // const kycDappBal = await providerESN.getBalance(KYCDAPP_ADDRESS);
 
       this.setState({
         kycApprovedCount: approvedKycsCount,
-        kycDappBal: ethers.utils.formatEther(kycDappBal)
+        // kycDappBal: ethers.utils.formatEther(kycDappBal)
       });
     }catch(e){
       console.log('getKycData error',e);
@@ -590,7 +608,7 @@ class Dashboard extends Component {
     } finally {
       this.setState({
 
-        esOwners: res,
+        esOwners: res || '-',
 
       });
     }
@@ -606,7 +624,7 @@ class Dashboard extends Component {
     } finally {
       this.setState({
 
-        allTxnsCount: res?.data ? res.data : '-',
+        allTxnsCount: res ? res : '-',
 
       });
     }
@@ -1649,7 +1667,7 @@ class Dashboard extends Component {
                 <Col lg={3}>
                   <div className="sub-supply-box mb10">
                     <div className="es-box-ds">
-                      <p className="supply-txt">TOTAL ES OWNERS</p>
+                      <p className="supply-txt">TOTAL ES Holders</p>
                       <p className="supply-txt">
                         {this.state.esOwners} addresses{' '}
                       </p>
@@ -1935,7 +1953,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Timeally total NRT Rewards Distributed</p>
                     <p className="value-dash-txt">
-                    {this.state.timeallyRewards}
+                    {this.state.timeallyRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -1945,28 +1963,37 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">ESNPOSCP Rewards Distributed </p>
                     <p className="value-dash-txt">
-                     {this.state.ESNPOSCPRewards}
+                     {this.state.ESNPOSCPRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
               </Col>
 
-              <Col sm={6} lg={3}>
+              {/* <Col sm={6} lg={3}>
                 <Card className=" ">
                   <Card.Body>
                     <p className="sect-txt-bold">KYC Pending Bucket </p>
-              <p className="value-dash-txt">{this.state.kycDappBal}</p>
+              <p className="value-dash-txt">{this.state.kycDappBal} ES</p>
+                  </Card.Body>
+                </Card>
+              </Col> */}
+              <Col sm={6} lg={3}>
+                <Card className="">
+                  <Card.Body>
+                    <p className="sect-txt-bold">Reserves for Crowd Fund phase 2 & 3 . </p>
+              <p className="value-dash-txt">{this.state.crowdFundBal} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
               <Col sm={6} lg={3}>
                 <Card className="">
                   <Card.Body>
-                    <p className="sect-txt-bold">Reserves for Crowd Fund phase 2 & 3 . </p>
-              <p className="value-dash-txt">{this.state.crowdFundBal}</p>
+                    <p className="sect-txt-bold">Reserves for Crowd Fund phase 2 & 3 in Staking </p>
+              <p className="value-dash-txt">{this.state.crowdfundStakeAmt} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
+              
             
             </Row>
 
@@ -1987,7 +2014,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Total Power Tokens Distributed </p>
                     <p className="value-dash-txt">
-                     {this.state.powertokenRewards}
+                     {this.state.powertokenRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -1997,7 +2024,7 @@ class Dashboard extends Component {
                   <Card.Body>
                     <p className="sect-txt-bold">Airdrop Total Distributed </p>
                     <p className="value-dash-txt">
-                      {this.state.airdropRewards}
+                      {this.state.airdropRewards} ES
                     </p>
                   </Card.Body>
                 </Card>
@@ -2007,7 +2034,7 @@ class Dashboard extends Component {
                 <Card className=" ">
                   <Card.Body>
                     <p className="sect-txt-bold">TimeAlly Club Total Distributed </p>
-                    <p className="value-dash-txt">{this.state.timeallyClubRewards}</p>
+                    <p className="value-dash-txt">{this.state.timeallyClubRewards} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -2015,7 +2042,7 @@ class Dashboard extends Component {
                 <Card className="">
                   <Card.Body>
                     <p className="sect-txt-bold">DaySwappers Total Rewards</p>
-                    <p className="value-dash-txt">{this.state.dayswappersRewards}</p>
+                    <p className="value-dash-txt">{this.state.dayswappersRewards} ES</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -2532,6 +2559,10 @@ class Dashboard extends Component {
                       {this.state.betdeex.data.predictors}
                     </p>
                   </div>
+                  <div>
+                  <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">-</p>
+                  </div>
                 </div>
 
                 <div className="bet-flex-border">
@@ -2597,7 +2628,11 @@ class Dashboard extends Component {
                     <p className="sect4-value">
                       {this.state.computeex.data.totalVolume}
                     </p>
+
+                    <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">-</p>
                   </div>
+                 
                 </div>
               </div>
             </Col>
@@ -2813,10 +2848,6 @@ class Dashboard extends Component {
                     <p className="sect4-context">Number of Lenders </p>
                     <p className="sect4-value-swal">0</p>
                   </div>
-                   <div>
-                    <p className="sect4-context">Volume of ES</p>
-                    <p className="sect4-value">0</p>
-                  </div>
                 </div>
                 <div className="swwall-border-flex">
                   <div>
@@ -2830,6 +2861,11 @@ class Dashboard extends Component {
                   <div>
                     <p className="sect4-context">TFC Generated</p>
                     <p className="sect4-value">0 </p>
+                  
+                  </div>
+                  <div>
+                  <p className="sect4-context">Volume of ES</p>
+                    <p className="sect4-value">0</p>
                   </div>
                 </div>
               </div>

@@ -62,8 +62,10 @@ class WESTransactions extends Component {
         .map(log => ({
           from: log.args['from'],
           to: log.args['to'],
-          tokens: log.args['tokens']
-        }));
+          tokens: log.args['tokens'],
+          blockNumber: log.blockNumber,
+        }))
+        .sort((a,b) => a.blockNumber > b.blockNumber ? -1 : 1);
 
         this.setState({ 
           wesTransactions,
@@ -73,7 +75,8 @@ class WESTransactions extends Component {
       console.log(e);
       this.openSnackBar(e.message);
       this.setState({
-        wesTransactions: []
+        wesTransactions: [],
+        isLoading: false
       });
     }
   }
