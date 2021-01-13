@@ -58,6 +58,7 @@ function App() {
           <Route exact path="/block/:blockNumber" component={BlockPage} />
           <Route exact path="/txns/pending" component={ViewPendingTransaction} />
           <Route exact path="/txns/wes" component={WESTransactions} />
+          <Route exact path="/txns/wes/:address" component={WESTransactions} />
           <Route exact path="/txns/failed" component={CancelledTransactions} />
           <Route exact path="/txns/topup" component={TopupTransactions} />
           <Route exact path="/txns" component={Transactions} />

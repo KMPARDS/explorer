@@ -8,7 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "bootstrap": "^4.5.0",
     "env-cmd": "^10.1.0",
-    "eraswap-sdk": "^2.0.5-commit.807ca3ec",
+    "eraswap-sdk": "^3.0.4-commit.3b6d66d0",
     "ethers": "^5.0.7",
     "highcharts": "^8.2.0",
     "highcharts-react-official": "^3.0.0",
@@ -20,6 +20,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "reactstrap": "^8.8.1",
     "recharts": "^1.8.5",
     "styled-components": "^5.2.0"
   },

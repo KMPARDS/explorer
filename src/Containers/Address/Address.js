@@ -151,6 +151,12 @@ class Address extends Component {
         <div className="container">
           <div className="BlockPage-detail">
             <Container>
+              <div className="text-right">
+                <Link to={{
+                  pathname: `/txns/wes/${this.state.address}`,
+                  state: { address: this.state.address }
+                }}>Show Wes Transactions</Link>
+              </div>
               <div className="row">
                 <div className="col-sm-12">
                   <div className="card">

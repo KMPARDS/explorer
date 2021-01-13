@@ -10,6 +10,8 @@ import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import AddressLink from '../../Components/AddressLink/AddressLink';
 import {ethers } from 'ethers';
 
+import { NrtReleaseModal } from './NrtReleaseModal/NrtReleaseModal';
+
 class Nrtmanager extends Component {
   snackbarRef = React.createRef();
 
@@ -24,7 +26,7 @@ class Nrtmanager extends Component {
       platforms: {
         data: [],
         isLoading: true,
-      },
+      }
     };
 
     this.openSnackBar = this.openSnackBar.bind(this);
@@ -58,6 +60,8 @@ class Nrtmanager extends Component {
     }
   }
 
+  
+
   openSnackBar(message) {
     // this.snackbarRef.current.openSnackBar(message);
   }
@@ -75,14 +79,15 @@ class Nrtmanager extends Component {
               <Row>
                 <Col lg={6}></Col>
                 <Col lg={6} className="text-right">
-                  <a
+                  {/* <a
                     href=""
                     className="btn btn-sm"
                     data-toggle="modal"
                     data-target="#nrtunsucessful"
                   >
                     RELEASE MONTLY NRT
-                  </a>
+                  </a> */}
+                  <NrtReleaseModal />
                 </Col>
               </Row>
 
