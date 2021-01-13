@@ -18,22 +18,46 @@ import DataTable from 'react-data-table-component';
 
 class WESTransactions extends Component {
   snackbarRef = React.createRef();
+  address = null;
 
   intervalIds = [];
   constructor(props) {
     super(props);
     this.state = {
-      wesTransactions: []
+      wesTransactions: [],
+      isLoading: false
     };
+    if(this.props.match.params.address){
+      this.address = this.props.match.params.address;
+    }
   }
 
   componentDidMount() {
     this.fetchWESTransactions();
   }
 
+  componentDidUpdate = async (prevProps) => {
+    if (this.props.match.params.address !== prevProps.match.params.address) {
+      this.address = this.props.match.params.address;
+      await this.setState({
+        wesTransactions: [],
+        isLoading: false
+      });
+      this.fetchWESTransactions();
+    }
+  }
+
   fetchWESTransactions = async () => {
     try {
-      const wesTransactions = (await prepaidInstance.queryFilter(prepaidInstance.filters.Transfer(null,null,null)))
+      await this.setState({
+        isLoading: true
+      });
+      const wesTransactions = (await prepaidInstance
+        .queryFilter(
+          prepaidInstance
+          .filters
+          .Transfer(null,this.address,null))
+        )
         .map(log => prepaidInstance.interface.parseLog(log))
         .map(log => ({
           from: log.args['from'],
@@ -41,7 +65,10 @@ class WESTransactions extends Component {
           tokens: log.args['tokens']
         }));
 
-        this.setState({ wesTransactions });
+        this.setState({ 
+          wesTransactions,
+          isLoading: false
+        });
     } catch (e) {
       console.log(e);
       this.openSnackBar(e.message);
@@ -93,6 +120,8 @@ class WESTransactions extends Component {
                   paginationComponentOptions={{
                     noRowsPerPage: true
                   }}
+                  progressComponent={<i className="fa fa-spinner fa-spin"></i>}
+                  progressPending={this.state.isLoading}
                 />
               </div>
             </Col>
