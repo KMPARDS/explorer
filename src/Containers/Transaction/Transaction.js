@@ -6,10 +6,11 @@ import Header from '../../Components/Header/Header';
 import Navbar from '../../Components/Navbar/Navbar';
 import { Col, Button, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import Apis from '../../lib/apis';
-import { toLocaleTimestamp, formatEther } from '../../lib/parsers';
+import { toLocaleTimestamp, formatEther,timeout } from '../../lib/parsers';
 import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import AddressLink from '../../Components/AddressLink/AddressLink';
 import { ethers } from 'ethers';
+import { providerESN } from '../../ethereum/Provider';
 
 class Transaction extends Component {
   snackbarRef = React.createRef();
@@ -56,7 +57,8 @@ class Transaction extends Component {
   async fetchTransaction() {
     try {
       console.log('this.state.hash', this.state.hash);
-      const res = await Apis.fetchTransaction(this.state.hash);
+      const resPromise = Apis.fetchTransaction(this.state.hash);
+      const res = await timeout(resPromise,2000);
       console.log('res', res);
       if (res.status)
         this.setState({
@@ -68,14 +70,60 @@ class Transaction extends Component {
         });
       else this.openSnackBar(res.error.message);
     } catch (e) {
-      console.log(e);
-      this.openSnackBar(e.message);
+      console.log('fetchTransaction error',e);
+      this.fetchTxnFromBlockchain();
+      // this.openSnackBar(e.message);
+      // this.setState({
+      //   transaction: {
+      //     data: {},
+      //     isLoading: false,
+      //   },
+      // });
+    }
+  }
+
+  async fetchTxnFromBlockchain(){
+    try{
+      const txn = await providerESN.getTransaction(this.state.hash);
       this.setState({
         transaction: {
-          data: {},
-          isLoading: false,
-        },
+          data: {
+            status_enum: 'pending',
+            block_number: txn.blockNumber,
+            timestamp: txn.timestamp,
+            fromAddress: txn.from,
+            toAddress: txn.to,
+            value: txn.value,
+            hash: txn.hash,
+            gas_price: txn.gasPrice,
+            gas_limit: formatEther(txn.gasLimit),
+            nonce: 0,
+            data: txn.data,
+          },
+          isLoading: false
+        }
       });
+      this.fetchTxnReceipt();
+    }catch(e){
+      console.log(e);
+    }
+  }
+
+  async fetchTxnReceipt(){
+    try{
+      const receipt = await providerESN.getTransactionReceipt(this.state.hash);
+      console.log({receipt});
+      this.setState({
+        transaction:{
+          data: {
+            ...this.state.transaction.data,
+            gas_used: ethers.utils.formatEther(receipt.gasUsed),
+            status_enum: receipt.status === 1 ? 'success' : 'failed'
+          }
+        }
+      })
+    }catch(e){
+      console.log(e);
     }
   }
 
@@ -291,7 +339,7 @@ class Transaction extends Component {
                                   &&  ethers.utils.formatEther(
                                   ethers.BigNumber.from(
                                     this.state.transaction.data.gas_price
-                                  ).mul(this.state.transaction.data.gas_used)
+                                  ).mul(ethers.utils.parseEther(this.state.transaction.data.gas_used))
                                 ) || '-'}{' '}
                                 ES
                               </td>
@@ -318,7 +366,7 @@ class Transaction extends Component {
                               <td>
                               {this.state.transaction.data.gas_used !== null
                               ?
-                                this.state.transaction.data.gas_used === 0
+                                Math.round(this.state.transaction.data.gas_used) === 0
                                 ?
                                   <>0 (0%)</>
                                 :

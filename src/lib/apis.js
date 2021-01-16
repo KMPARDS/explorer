@@ -1,7 +1,7 @@
 const { baseUrl } = require('../config/config');
 
 const ajax = async (url) => {
-  return await fetch(url)
+  return await fetch(url,{},1000)
     .then((res) => res.json())
     .catch((err) => err);
 };
