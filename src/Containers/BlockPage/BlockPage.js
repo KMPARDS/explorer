@@ -5,11 +5,12 @@ import Header from '../../Components/Header/Header';
 import Navbar from '../../Components/Navbar/Navbar';
 import { Col, Button, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import Apis from '../../lib/apis';
-import { toLocaleTimestamp } from '../../lib/parsers';
+import { timeout, toLocaleTimestamp } from '../../lib/parsers';
 import { Snackbar } from '../../Components/Snackbar/Snackbar';
 import AddressLink from '../../Components/AddressLink/AddressLink';
 import { Link } from 'react-router-dom';
 import { ethers } from 'ethers';
+import { providerESN } from '../../ethereum/Provider';
 
 class BlockPage extends Component {
   snackbarRef = React.createRef();
@@ -55,7 +56,8 @@ class BlockPage extends Component {
 
   async fetchBlock() {
     try {
-      const res = await Apis.fetchBlock(this.state.blockNumber);
+      const resPromise = Apis.fetchBlock(this.state.blockNumber);
+      const res = await timeout(resPromise,2000);
       console.log('res', res);
       if (res.status)
         this.setState({
@@ -64,16 +66,60 @@ class BlockPage extends Component {
             isLoading: false,
           },
         });
-      else this.openSnackBar(res.error.message);
+      
     } catch (e) {
       console.log(e);
-      this.openSnackBar(e.message);
+      // this.openSnackBar(e.message);
+      this.fetchBlockFromBlockchain();
+      // this.setState({
+      //   block: {
+      //     data: {},
+      //     isLoading: false,
+      //   },
+      // });
+    }
+  }
+  
+  async fetchBlockFromBlockchain(){
+    try {
+      const blockNumberHex = Number(this.state.blockNumber).toString(16);
+      const block = await providerESN.send('eth_getBlockByNumber', [
+        '0x' + blockNumberHex,
+        true,
+      ]);
+
+      // const total_txn_fee = ethers.constants.Zero;
+      // const gasDetails = block.transactions.map(txn =>{
+      //   total_txn_fee = total_txn_fee.add(txn.gasPrice)
+      // })
+      console.log({block});
       this.setState({
         block: {
-          data: {},
-          isLoading: false,
-        },
-      });
+          data: {
+            hash: block.hash,
+            timestamp: block.timestamp*1000,
+            raw_transactions_count: block.transactions.length,
+            internal_transactions_count: 0,
+            miner: {
+              address:  block.miner,
+              label: '',
+            },
+            total_txn_fee: '0x0',
+            average_gas_price: '0x0',
+            sealedField1: block.sealedFields[0],
+            sealedField2: block.sealedFields[1],
+            size: block.size,
+            total_gas_used: Number(block.gasUsed),
+            total_gas_limit: Number(block.gasLimit),
+            extra_data: block.extraData,
+            parent_hash: block.parentHash,
+            nonce: 0,
+          },
+          isLoading: false
+        }
+      })
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -255,7 +301,7 @@ class BlockPage extends Component {
                               >
                                 Size:
                               </td>
-                              <td>{this.state.block.data.size} bytes</td>
+                              <td>{Number(this.state.block.data.size || 0)} bytes</td>
                             </tr>
 
                             <tr>
@@ -268,11 +314,16 @@ class BlockPage extends Component {
                               </td>
                               <td>
                                 {this.state.block.data.total_gas_used} (
-                                {(
+                                {isFinite(this.state.block.data.total_gas_used) && 
+                                isFinite(this.state.block.data.total_gas_limit) 
+                                ?
+                                (
                                   (this.state.block.data.total_gas_used /
                                     this.state.block.data.total_gas_limit) *
                                   100
-                                ).toFixed(2)}
+                                ).toFixed(2)
+                                :
+                                '0.00'}
                                 %)
                               </td>
                             </tr>
