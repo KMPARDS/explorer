@@ -209,5 +209,5 @@ const _abi = [
 //   es.addresses[process.env.REACT_APP_NODE_ENV].ETH.plasmaManager, _abi, providerEth);
 
 module.exports = {
-  plasmaManager: PlasmaManagerFactory.connect(es.addresses[process.env.REACT_APP_NODE_ENV].ETH.plasmaManager,providerEth),
+  plasmaManager: PlasmaManagerFactory.connect(es.addresses.production.ETH.plasmaManager,providerEth),
 };

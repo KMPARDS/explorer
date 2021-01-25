@@ -746,7 +746,7 @@ const _abi = [
 
 module.exports = {
   validatorsManager: ValidatorManagerFactory.connect(
-    es.addresses[process.env.REACT_APP_NODE_ENV].ESN.validatorManager,
+    es.addresses.production.ESN.validatorManager,
     providerESN
   ),
 };

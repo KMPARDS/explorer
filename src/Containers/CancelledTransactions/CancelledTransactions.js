@@ -99,7 +99,7 @@ class CancelledTransactions extends Component {
                                 <AddressLink
                                   value={transaction.txn_hash}
                                   type="txn"
-                                  shrink={true}
+                                  // shrink={true}
                                 />
                               </td>
                               <td>
@@ -108,16 +108,14 @@ class CancelledTransactions extends Component {
                                 ).fromNow()}
                               </td>
                               <td>
-                                {transaction.value && ethers.utils.formatEther(transaction.value)} ES{' '}
+                                {transaction.value} ES{' '}
                               </td>
                               <td>
                                 {(transaction.gas_price !== null 
                                   && transaction.gas_used !== null)
-                                  ? ethers.utils.formatEther(
-                                  ethers.BigNumber.from(
-                                    transaction.gas_price
-                                  ).mul(transaction.gas_used)
-                                ) : 'N/A'}{' '}
+                                  ?
+                                    transaction.gas_price * transaction.gas_used
+                                  : 'N/A'}{' '}
                                 ES
                               </td>
                             </tr>

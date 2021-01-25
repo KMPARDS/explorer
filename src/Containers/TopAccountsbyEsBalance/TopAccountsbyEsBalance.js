@@ -82,7 +82,7 @@ class TopAccountsbyEsBalance extends Component {
                     },
                     {
                       name: 'Txn Count',
-                      selector: 'txnsCount'
+                      selector: 'txns_count'
                     }
                   ]
                 }

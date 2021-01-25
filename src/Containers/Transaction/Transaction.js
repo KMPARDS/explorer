@@ -271,9 +271,9 @@ class Transaction extends Component {
                             <tr>
                               <td>Value:</td>
                               <td>
-                                {ethers.utils.formatEther(
+                                {
                                   this.state.transaction.data.value
-                                )}{' '}
+                                  }{' '}
                                 ES
                               </td>
                             </tr>
