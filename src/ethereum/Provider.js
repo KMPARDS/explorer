@@ -6,7 +6,7 @@ const { es } = require('eraswap-sdk');
 export const providerESN = new es.CustomJsonRpcProvider('https://rpc-mumbai.mainnet.eraswap.network');
 // export const providerESN = new ethers.providers.JsonRpcProvider('https://rpc-mumbai.mainnet.eraswap.network');
 
-export const providerEth = ethers.getDefaultProvider(process.env.REACT_APP_NODE_ENV === 'development' ? 'rinkeby' : 'homestead', {
+export const providerEth = ethers.getDefaultProvider('homestead', {
   infura: 'b915fe11a8ab4e73a3edba4c59d656b2',
 });
 

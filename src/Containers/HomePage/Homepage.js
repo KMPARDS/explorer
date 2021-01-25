@@ -516,7 +516,7 @@ class Homepage extends Component {
   }
 
   async getTotalSupply(){
-    const nrtBalance = await providerESN.getBalance(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.nrtManager);
+    const nrtBalance = await providerESN.getBalance(es.addresses.production.ESN.nrtManager);
     const luckPoolBal = await nrtManager.luckPoolBalance();
     const burnPoolBal = await providerESN.getBalance(BURN_POOL_ADDRESS);
     const burnAddressBal = await providerESN.getBalance('0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
@@ -1004,7 +1004,7 @@ class Homepage extends Component {
                                 </td>
                                 <td>
                                   <div className="era-no">
-                                    {formatEther(transaction.value)} ES
+                                    {transaction.value} ES
                                   </div>{' '}
                                 </td>
                               </tr>

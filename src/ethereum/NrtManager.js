@@ -667,7 +667,7 @@ const _abi = [
 //   );
 // };
 const nrtManager = NrtManagerFactory.connect(
-  providerESN.resolveAddress(es.addresses[process.env.REACT_APP_NODE_ENV].ESN.nrtManager),
+  providerESN.resolveAddress(es.addresses.production.ESN.nrtManager),
   providerESN
 )
 

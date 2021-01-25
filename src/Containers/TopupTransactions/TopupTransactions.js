@@ -96,7 +96,7 @@ class TopupTransactions extends Component {
                    },
                    {
                      name: 'Amount (ES)',
-                     cell: row => row.amount ? formatEther(row.amount) : 0
+                     cell: row => row.amount ? row.amount : 0
                    },
                  ]
                }

@@ -365,7 +365,7 @@ const _abi = [
 
 module.exports = {
   reversePlasmaManager: ReversePlasmaFactory.connect(
-    es.addresses[process.env.REACT_APP_NODE_ENV].ESN.reversePlasma,
+    es.addresses.production.ESN.reversePlasma,
     providerESN
   ),
 };

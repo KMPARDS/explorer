@@ -332,7 +332,7 @@ const _abi = [
 
 module.exports = {
   timeAllyManager: TimeAllyManagerFactory.connect(
-    es.addresses[process.env.REACT_APP_NODE_ENV].ESN.timeallyManager,
+    es.addresses.production.ESN.timeallyManager,
     providerESN
   ),
 };
