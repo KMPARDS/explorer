@@ -842,7 +842,7 @@ class Homepage extends Component {
                           <tr>
                             <td className="frst-era">
                               <AddressLink
-                                value={bunch.bunchIndex}
+                                value={bunch.bunch_index}
                                 type="bunch"
                               />
                               <div className="sub-frst">
@@ -865,7 +865,7 @@ class Homepage extends Component {
                               {/* <div className="sub-frst">45 secs ago</div>  */}
                             </td>
                             <td>
-                              <div className="era-no">{bunch.bunchDepth} </div>{' '}
+                              <div className="era-no">{bunch.bunch_depth} </div>{' '}
                             </td>
                           </tr>
                         ))

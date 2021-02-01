@@ -105,14 +105,14 @@ class Bunch extends Component {
                           <tr>
                             <td className="tr-color-txt" key={i + 1}>
                               <AddressLink
-                                value={bunch.bunchIndex}
+                                value={bunch.bunch_index}
                                 type="bunch"
                               />
                             </td>
                             <td className="tr-color-txt">
-                              {bunch.blocksCount}
+                              {bunch.blocks_count}
                             </td>
-                            <td>{bunch.transactionsCount}</td>
+                            <td>{bunch.transactions_count}</td>
                             <td>
                               {toLocaleTimestamp(bunch.timestamp).format(
                                 'hh:mm:ss A DD/MM/YYYY'
