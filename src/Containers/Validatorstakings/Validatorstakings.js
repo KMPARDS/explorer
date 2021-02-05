@@ -220,14 +220,14 @@ class Validatorstakings extends Component {
                                       <tr>
                                         <td>{validator.validator.address}</td>
                                         <td>
-                                          {ethers.utils.formatEther(
+                                          {
                                             validator.amount
-                                          )}{' '}
+                                          }{' '}
                                         </td>
                                         <td>
-                                          {ethers.utils.formatEther(
+                                          {
                                             validator.adjusted_amount
-                                          )}
+                                          }
                                         </td>
                                         <td>
                                           {validator.blocks_mined}{' '}

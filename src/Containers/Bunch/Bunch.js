@@ -117,7 +117,7 @@ class Bunch extends Component {
                               >
                                 Bunch Index:{' '}
                               </td>
-                              <td>{this.state.bunch.data.bunchIndex}</td>
+                              <td>{this.state.bunch.data.bunch_index}</td>
                             </tr>
                             <tr>
                               <td
@@ -127,7 +127,7 @@ class Bunch extends Component {
                               >
                                 Bunch Depth:{' '}
                               </td>
-                              <td>{this.state.bunch.data.bunchDepth}</td>
+                              <td>{this.state.bunch.data.bunch_depth}</td>
                             </tr>
                             <tr>
                               <td
@@ -138,7 +138,7 @@ class Bunch extends Component {
                                 Transactions Mega Root:{' '}
                               </td>
                               <td>
-                                {this.state.bunch.data.transactionsMegaRoot}
+                                {this.state.bunch.data.transactions_mega_root}
                               </td>
                             </tr>
                             <tr>
@@ -149,7 +149,7 @@ class Bunch extends Component {
                               >
                                 Receipts Mega Root:{' '}
                               </td>
-                              <td>{this.state.bunch.data.receiptsMegaRoot}</td>
+                              <td>{this.state.bunch.data.receipts_mega_root}</td>
                             </tr>
                             <tr>
                               <td
@@ -159,7 +159,7 @@ class Bunch extends Component {
                               >
                                 Last Block Hash:{' '}
                               </td>
-                              <td>{this.state.bunch.data.lastBlockHash}</td>
+                              <td>{this.state.bunch.data.last_block_hash}</td>
                             </tr>
                             <tr>
                               <td
@@ -184,7 +184,7 @@ class Bunch extends Component {
                               >
                                 Informer Transaction Hash:{' '}
                               </td>
-                              <td>{this.state.bunch.data.informerTxHash}</td>
+                              <td>{this.state.bunch.data.informer_tx_hash}</td>
                             </tr>
                             <tr>
                               <td
@@ -194,7 +194,7 @@ class Bunch extends Component {
                               >
                                 Blocks Count:{' '}
                               </td>
-                              <td>{this.state.bunch.data.blocksCount}</td>
+                              <td>{this.state.bunch.data.blocks_count}</td>
                             </tr>
                             <tr>
                               <td
@@ -204,7 +204,7 @@ class Bunch extends Component {
                               >
                                 Transactions Count:{' '}
                               </td>
-                              <td>{this.state.bunch.data.transactionsCount}</td>
+                              <td>{this.state.bunch.data.transactions_count}</td>
                             </tr>
                             <tr>
                               <td
