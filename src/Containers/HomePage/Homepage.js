@@ -270,9 +270,9 @@ class Homepage extends Component {
           data.forEach((validator, i) => {
             this.cummulativeStakes =
               Number(this.cummulativeStakes) +
-              Number(formatEther(validator.amount));
+              Number(validator.amount);
             data[i].cummulativeStakes = this.cummulativeStakes;
-            data[i].amount = Number(formatEther(validator.amount));
+            data[i].amount = Number(validator.amount);
 
             const validatorDelegationSum = validator
               .delegatorstakings?.map(staking => ethers.BigNumber.from(staking.amount))

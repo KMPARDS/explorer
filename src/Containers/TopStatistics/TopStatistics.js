@@ -211,7 +211,7 @@ class TopStatistics extends Component {
           address: res?.data ? res.data[0]?.address || '-' : '-',
           amt:
             res?.data && res.data[0]?.amount
-              ? formatEther(res.data[0]?.amount) || '-'
+              ? Number(res.data[0]?.amount) || '-'
               : '-',
           isLoading: true,
         },
@@ -1083,7 +1083,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Staked Amount',
-                                  cell: row => (row.amount ? formatEther(row.amount) : 0) + ' ES'
+                                  cell: row => (row.amount ? Number(row.amount) : 0) + ' ES'
                                 }
                               ]
                             }
