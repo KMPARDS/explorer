@@ -320,9 +320,9 @@ class Address extends Component {
                             name: 'Value',
                             selector: '',
                             cell: row => <>
-                            {ethers.utils.formatEther(
+                            {
                                           row.value
-                                        )}{' '}
+                                        }{' '}
                                         ES{' '}
                                       
                                       </>
