@@ -60,7 +60,7 @@ class Transaction extends Component {
       const resPromise = Apis.fetchTransaction(this.state.hash);
       const res = await timeout(resPromise,2000);
       console.log('res', res);
-      if (res.status)
+      if (res.status && Array.isArray(res.data))
         this.setState({
           transaction: {
             data: res.data,
@@ -272,7 +272,7 @@ class Transaction extends Component {
                               <td>Value:</td>
                               <td>
                                 {
-                                  this.state.transaction.data.value
+                                  formatEther(this.state.transaction.data.value)
                                   }{' '}
                                 ES
                               </td>
