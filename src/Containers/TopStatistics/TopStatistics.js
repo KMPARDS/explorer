@@ -1144,10 +1144,10 @@ class TopStatistics extends Component {
                                   name: 'Total Blokcee Mined',
                                   selector: 'blocks'
                                 },
-                                {
-                                  name: 'Total Txn Fees',
-                                  cell: row => row.totalTxnFee && row.totalTxnFee || '-'
-                                }
+                                // {
+                                //   name: 'Total Txn Fees',
+                                //   cell: row => row.totalTxnFee && row.totalTxnFee || '-'
+                                // }
                               ]
                             }
                           />
