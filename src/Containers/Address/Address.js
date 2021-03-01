@@ -250,7 +250,7 @@ class Address extends Component {
                             selector: '',
                             cell: row => <>
                             {toLocaleTimestamp(
-                                          row.createdOn
+                                          row.block.timestamp
                                         ).fromNow()}</>
                           },
                           {

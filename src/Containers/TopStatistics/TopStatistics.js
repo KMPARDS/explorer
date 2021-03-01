@@ -9,7 +9,6 @@ import Apis from '../../lib/apis';
 import { validatorsManager } from '../../ethereum/ValidatorStakingsManager';
 import { nrtManager } from '../../ethereum/NrtManager';
 import { ethers } from 'ethers';
-import { formatEther } from '../../lib/parsers';
 import AddressLink from '../../Components/AddressLink/AddressLink';
 import { PieChart, Pie, Cell } from 'recharts';
 import { CustomDatatable } from '../../Components/CustomDatatable/CustomDatatable';
@@ -137,8 +136,8 @@ class TopStatistics extends Component {
   async fetchStatistics() {
     let res;
     try {
-      res = await Apis.fetchStatistics({ limit: 1 });
-      console.log(res);
+      res = await Apis.fetchStatistics({ limit: 10 });
+      console.log('fetchStatistics',res);
     } catch (e) {
     } finally {
       if (res && res.status) {
@@ -146,32 +145,32 @@ class TopStatistics extends Component {
           topSender: {
             address: res.topSender[0].address,
             amt:
-              (res?.topSender[0]?.totalESSent &&
-                formatEther(res.topSender[0].totalESSent)) ||
+              (res?.topSender[0]?.total_es_sent &&
+                res.topSender[0].total_es_sent) ||
               '-',
             isLoading: false,
           },
           topReceiver: {
             address: res.topReceiver[0].address,
             amt:
-              (res?.topReceiver[0]?.totalESReceived &&
-                formatEther(res.topReceiver[0].totalESReceived)) ||
+              (res?.topReceiver[0]?.total_es_received &&
+                res.topReceiver[0].total_es_received) ||
               '-',
             isLoading: false,
           },
           topSentTxn: {
             address: res.topTxnSent[0].address,
-            count: res.topTxnSent[0].txnSentCount,
+            count: res.topTxnSent[0].txn_sent_count,
             isLoading: false,
           },
           topReceivedTxn: {
             address: res.topTxnReceived[0].address,
-            count: res.topTxnReceived[0].txnReceivedCount,
+            count: res.topTxnReceived[0].txn_received_count,
             isLoading: false,
           },
           topTxnAcc: {
             address: res.topAccountByTxnCount[0].address,
-            count: res.topAccountByTxnCount[0].address_txnsCount,
+            count: res.topAccountByTxnCount[0].address_txns_count,
             isLoading: false,
           },
           topSendersList: {
@@ -619,8 +618,8 @@ class TopStatistics extends Component {
                                         />
                                       </td>
                                       <td>
-                                        {account.totalESSent &&
-                                          formatEther(account.totalESSent)}{' '}
+                                        {account.total_es_sent &&
+                                          formatEther(account.total_es_sent)}{' '}
                                         ES
                                       </td>
                                       <td>
@@ -656,7 +655,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Amount',
-                                  cell: row => row.totalESSent ? formatEther(row.totalESSent) : 0
+                                  cell: row => row.total_es_sent ? row.total_es_sent : 0
                                 },
                                 {
                                   name: 'Percentage',
@@ -696,9 +695,9 @@ class TopStatistics extends Component {
                                         />
                                       </td>
                                       <td>
-                                        {account.totalESReceived &&
+                                        {account.total_es_received &&
                                           formatEther(
-                                            account.totalESReceived
+                                            account.total_es_received
                                           )}{' '}
                                         ES
                                       </td>
@@ -735,7 +734,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Amount',
-                                  cell: row => row.totalESReceived ? formatEther(row.totalESReceived) : 0
+                                  cell: row => row.total_es_received ? row.total_es_received : 0
                                 },
                                 {
                                   name: 'Percentage',
@@ -774,7 +773,7 @@ class TopStatistics extends Component {
                                           type="address"
                                         />
                                       </td>
-                                      <td>{account.txnSentCount} </td>
+                                      <td>{account.txn_sent_count} </td>
                                       <td>
                                         {account?.percent !== undefined
                                           ? account?.percent
@@ -808,7 +807,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Total Txn',
-                                  selector: 'txnSentCount'
+                                  selector: 'txn_sent_count'
                                 },
                                 {
                                   name: 'Percentage',
@@ -847,7 +846,7 @@ class TopStatistics extends Component {
                                           type="address"
                                         />
                                       </td>
-                                      <td>{account.txnReceivedCount} </td>
+                                      <td>{account.txn_received_count} </td>
                                       <td>
                                         {account?.percent !== undefined
                                           ? account?.percent
@@ -881,7 +880,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Total Txn',
-                                  selector: 'txnReceivedCount'
+                                  selector: 'txn_received_count'
                                 },
                                 {
                                   name: 'Percentage',
@@ -968,9 +967,9 @@ class TopStatistics extends Component {
                                         />
                                       </td>
                                       <td>
-                                        {account.totalESReceived &&
+                                        {account.total_es_received &&
                                           formatEther(
-                                            account.totalESReceived
+                                            account.total_es_received
                                           )}{' '}
                                         ES
                                       </td>
@@ -1007,7 +1006,7 @@ class TopStatistics extends Component {
                                 },
                                 {
                                   name: 'Amount',
-                                  cell: row => row.totalESReceived ? formatEther(row.totalESReceived) : 0
+                                  cell: row => row.total_es_received ? row.total_es_received : 0
                                 },
                                 {
                                   name: 'Percentage',
@@ -1128,7 +1127,7 @@ class TopStatistics extends Component {
                           </table>
                           </div> */}
                           <CustomDatatable
-                            title="Top Stakers"
+                            title="Top Blokcee"
                             apiCallback={Apis.fetchTopNodes}
                             countPerPage = {COUNT_PER_PAGE}
                             columns={
@@ -1145,10 +1144,10 @@ class TopStatistics extends Component {
                                   name: 'Total Blokcee Mined',
                                   selector: 'blocks'
                                 },
-                                {
-                                  name: 'Total Txn Fees',
-                                  cell: row => row.totalTxnFee && formatEther(row.totalTxnFee) || '-'
-                                }
+                                // {
+                                //   name: 'Total Txn Fees',
+                                //   cell: row => row.totalTxnFee && row.totalTxnFee || '-'
+                                // }
                               ]
                             }
                           />
