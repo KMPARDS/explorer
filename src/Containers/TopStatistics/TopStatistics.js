@@ -136,7 +136,7 @@ class TopStatistics extends Component {
   async fetchStatistics() {
     let res;
     try {
-      res = await Apis.fetchStatistics({ limit: 10 });
+      res = await Apis.fetchStatistics({ limit: 2 });
       console.log('fetchStatistics',res);
     } catch (e) {
     } finally {
