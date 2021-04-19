@@ -309,6 +309,9 @@ ul li {
   .wrapper-sub-section {
     width: 100% !important;
   }
+  .navbar {
+      padding: 1.2rem 1rem 0.5rem;
+  }
 }
 .flex-count-box li.count-txt {
   vertical-align: middle;

@@ -432,7 +432,7 @@ label {
 
 @media (max-width: 992px) {
   .booking-hero-bgd {
-    height: 30vh !important;
+    height: 20vh !important;
   }
 
   .searchbar:hover > .search_input {

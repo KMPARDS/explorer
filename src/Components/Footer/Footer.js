@@ -23,7 +23,7 @@ class Footer extends Component {
                   alt="logo"
                 />
               </div>
-              <p className="sub-footer-white mt10">
+              <p className="sub-footer-white mt10 pdb20">
                 ES Explorer offers complete Dashboards to participants to
                 explore live Analytics and Stats on Latest Blocks, Bunch, Nodes
                 & Transactions of Era Swap Network
